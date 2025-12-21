@@ -12,11 +12,11 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map Stripe product IDs to plan names
-const productToPlan: Record<string, string> = {
-  'prod_TeCiCCFNeORn9S': 'starter',
-  'prod_TeCiyupNyVBR05': 'growth',
-  'prod_TeCivsSU28U4G1': 'enterprise',
+// Map Stripe product IDs to plan names and credits
+const productToPlan: Record<string, { name: string; credits: number }> = {
+  'prod_TeCiCCFNeORn9S': { name: 'starter', credits: 50 },
+  'prod_TeCiyupNyVBR05': { name: 'growth', credits: 200 },
+  'prod_TeCivsSU28U4G1': { name: 'enterprise', credits: 9999 },
 };
 
 serve(async (req) => {
@@ -99,10 +99,11 @@ serve(async (req) => {
       }
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
-      // Safely get product ID
+      // Safely get product ID and plan details
       if (subscription.items?.data?.[0]?.price?.product) {
         productId = subscription.items.data[0].price.product as string;
-        planName = productToPlan[productId] || 'unknown';
+        const planInfo = productToPlan[productId];
+        planName = planInfo?.name || 'unknown';
       }
       logStep("Determined subscription tier", { productId, planName });
 
@@ -144,13 +145,20 @@ serve(async (req) => {
             });
         }
 
-        // Update profile plan_id
+        // Get plan credits from our mapping
+        const planInfo = productToPlan[productId!];
+        const planCredits = planInfo?.credits || 5;
+
+        // Update profile with plan_id and reset credits for the billing period
         await supabaseClient
           .from('profiles')
-          .update({ plan_id: planData.id })
+          .update({ 
+            plan_id: planData.id,
+            credits: planCredits
+          })
           .eq('id', user.id);
 
-        logStep("Updated user plan in database", { planId: planData.id });
+        logStep("Updated user plan in database", { planId: planData.id, credits: planCredits });
       }
     } else {
       logStep("No active subscription found");
