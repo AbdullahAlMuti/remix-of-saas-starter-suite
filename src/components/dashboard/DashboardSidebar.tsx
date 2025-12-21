@@ -20,6 +20,7 @@ import {
   ClipboardList,
   DollarSign,
   ShieldCheck,
+  Crown,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,7 @@ const mainNavItems: NavItem[] = [
   { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
   { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
   { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
+  { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
 ];
 
 const adminNavItems: NavItem[] = [

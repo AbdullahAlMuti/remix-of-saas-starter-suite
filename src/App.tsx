@@ -13,6 +13,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/dashboard/Orders";
 import Listings from "./pages/dashboard/Listings";
+import Subscription from "./pages/dashboard/Subscription";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="alerts" element={<Dashboard />} />
               <Route path="prompts" element={<Dashboard />} />
               <Route path="credits" element={<Dashboard />} />
+              <Route path="subscription" element={<Subscription />} />
               <Route path="settings" element={<Dashboard />} />
             </Route>
 
