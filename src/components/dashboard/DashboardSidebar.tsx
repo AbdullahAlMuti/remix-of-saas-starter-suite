@@ -16,6 +16,8 @@ import {
   BarChart3,
   Users,
   CreditCard,
+  Megaphone,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -38,9 +40,11 @@ const mainNavItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
-  { icon: BarChart3, label: 'Analytics', href: '/admin', adminOnly: true },
+  { icon: BarChart3, label: 'Dashboard', href: '/admin', adminOnly: true },
   { icon: Users, label: 'Users', href: '/admin/users', adminOnly: true },
   { icon: CreditCard, label: 'Plans', href: '/admin/plans', adminOnly: true },
+  { icon: Megaphone, label: 'Notices', href: '/admin/notices', adminOnly: true },
+  { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit', adminOnly: true },
   { icon: Shield, label: 'Settings', href: '/admin/settings', adminOnly: true },
 ];
 

@@ -15,6 +15,8 @@ import Listings from "./pages/dashboard/Listings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
+import AdminNotices from "./pages/admin/AdminNotices";
+import AdminAudit from "./pages/admin/AdminAudit";
 import AdminSettings from "./pages/admin/AdminSettings";
 import NotFound from "./pages/NotFound";
 
@@ -55,6 +57,8 @@ const App = () => (
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="plans" element={<AdminPlans />} />
+              <Route path="notices" element={<AdminNotices />} />
+              <Route path="audit" element={<AdminAudit />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 
