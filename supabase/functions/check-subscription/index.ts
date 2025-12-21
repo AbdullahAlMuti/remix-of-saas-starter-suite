@@ -115,12 +115,12 @@ serve(async (req) => {
         .single();
 
       if (planData) {
-        // Check if user_plan exists
+        // Check if user_plan exists (use maybeSingle to avoid errors)
         const { data: existingPlan } = await supabaseClient
           .from('user_plans')
           .select('id')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (existingPlan) {
           await supabaseClient
