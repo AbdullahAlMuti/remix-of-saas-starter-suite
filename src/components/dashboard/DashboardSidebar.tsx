@@ -57,6 +57,9 @@ export function DashboardSidebar() {
   const { profile, isAdmin, signOut } = useAuth();
   const location = useLocation();
 
+  // Determine if we're in the admin section
+  const isAdminSection = location.pathname.startsWith('/admin');
+
   const isActive = (href: string) => {
     if (href === '/dashboard' || href === '/admin') {
       return location.pathname === href;
@@ -93,37 +96,9 @@ export function DashboardSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {/* Main Nav */}
-        <div className="space-y-1">
-          {!isCollapsed && (
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
-              Main
-            </p>
-          )}
-          {mainNavItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
-                  active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                )}
-              >
-                <Icon className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-                {!isCollapsed && <span className="font-medium">{item.label}</span>}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Admin Nav */}
-        {isAdmin && (
-          <div className="pt-4 mt-4 border-t border-sidebar-border space-y-1">
+        {/* Show Admin Nav ONLY when in admin section */}
+        {isAdminSection && isAdmin ? (
+          <div className="space-y-1">
             {!isCollapsed && (
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
                 Admin
@@ -148,6 +123,74 @@ export function DashboardSidebar() {
                 </Link>
               );
             })}
+            
+            {/* Link back to user dashboard */}
+            <div className="pt-4 mt-4 border-t border-sidebar-border">
+              {!isCollapsed && (
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
+                  Switch
+                </p>
+              )}
+              <Link
+                to="/dashboard"
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                  'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}
+              >
+                <LayoutDashboard className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
+                {!isCollapsed && <span className="font-medium">User Dashboard</span>}
+              </Link>
+            </div>
+          </div>
+        ) : (
+          /* Show Main Nav when in user dashboard */
+          <div className="space-y-1">
+            {!isCollapsed && (
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
+                Main
+              </p>
+            )}
+            {mainNavItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                    active
+                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  )}
+                >
+                  <Icon className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
+                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
+                </Link>
+              );
+            })}
+            
+            {/* Link to admin panel for admins */}
+            {isAdmin && (
+              <div className="pt-4 mt-4 border-t border-sidebar-border">
+                {!isCollapsed && (
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
+                    Admin
+                  </p>
+                )}
+                <Link
+                  to="/admin"
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                    'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  )}
+                >
+                  <Shield className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
+                  {!isCollapsed && <span className="font-medium">Admin Panel</span>}
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </nav>
