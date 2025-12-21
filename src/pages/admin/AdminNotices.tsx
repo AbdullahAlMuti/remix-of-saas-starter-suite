@@ -66,14 +66,6 @@ interface Notice {
   created_at: string;
   created_by: string | null;
 }
-  priority: number;
-  target_audience: string;
-  is_active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-  created_at: string;
-  created_by: string | null;
-}
 
 interface NoticeFormData {
   title: string;

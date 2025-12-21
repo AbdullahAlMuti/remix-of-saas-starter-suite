@@ -199,14 +199,6 @@ export default function AdminPlans() {
 
       if (error) throw error;
 
-      // Log audit
-      await supabase.from('audit_logs').insert({
-        action: 'PLAN_DELETED',
-        entity_type: 'plan',
-        entity_id: deletingPlan.id,
-        old_values: deletingPlan,
-      });
-
       setDeletingPlan(null);
       fetchPlans();
       toast.success('Plan deleted successfully');
