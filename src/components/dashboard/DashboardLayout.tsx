@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { DashboardSidebar } from './DashboardSidebar';
+import { NoticesBanner } from './NoticesBanner';
 import { motion } from 'framer-motion';
 
 export function DashboardLayout() {
@@ -30,6 +31,7 @@ export function DashboardLayout() {
         className="min-h-screen"
       >
         <div className="p-6 lg:p-8">
+          <NoticesBanner />
           <Outlet />
         </div>
       </motion.main>
