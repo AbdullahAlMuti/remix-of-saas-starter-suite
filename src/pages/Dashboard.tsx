@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { 
   Package, 
   ShoppingCart, 
@@ -21,6 +20,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription, PLANS } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { StatsCard } from '@/components/dashboard/StatsCard';
 import { cn } from '@/lib/utils';
 
 interface DashboardStats {
@@ -160,14 +160,19 @@ export default function Dashboard() {
 
   const creditsPercent = Math.min((stats.creditsRemaining / stats.creditsMax) * 100, 100);
 
+  // Generate sample sparkline data (in real app, this would come from API)
+  const generateSparklineData = useCallback((base: number, volatility: number = 0.2) => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const trend = i * 0.1;
+      const noise = (Math.random() - 0.5) * volatility;
+      return Math.max(0, base * (1 + trend + noise));
+    });
+  }, []);
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Clean Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-semibold text-foreground tracking-tight">
             Welcome back, {profile?.full_name?.split(' ')[0] || 'there'}
@@ -199,47 +204,48 @@ export default function Dashboard() {
             </Button>
           )}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Stats Grid - Clean Cards */}
+      {/* Stats Grid - Enhanced Cards with Sparklines */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
+        <StatsCard
           title="Active Listings"
           value={stats.activeListings}
           icon={Package}
-          delay={0}
+          variant="accent"
+          change={stats.activeListings > 0 ? 12 : undefined}
+          sparklineData={stats.activeListings > 0 ? generateSparklineData(stats.activeListings) : undefined}
         />
-        <StatCard
+        <StatsCard
           title="Pending Orders"
           value={stats.pendingOrders}
           icon={ShoppingCart}
-          accent={stats.pendingOrders > 0}
-          delay={0.05}
+          variant={stats.pendingOrders > 0 ? 'warning' : 'default'}
+          subtitle={stats.pendingOrders > 0 ? 'Requires attention' : 'All clear'}
         />
-        <StatCard
+        <StatsCard
           title="Total Profit"
           value={`$${stats.totalProfit.toFixed(2)}`}
           icon={DollarSign}
-          positive
-          delay={0.1}
+          variant="success"
+          change={stats.totalProfit > 0 ? 8.5 : undefined}
+          sparklineData={stats.totalProfit > 0 ? generateSparklineData(stats.totalProfit, 0.3) : undefined}
         />
-        <StatCard
+        <StatsCard
           title="Orders Today"
           value={stats.ordersToday}
           icon={TrendingUp}
-          delay={0.15}
+          variant={stats.ordersToday > 0 ? 'success' : 'default'}
+          subtitle={stats.ordersToday > 0 ? 'Keep it up!' : 'No orders yet'}
+          progress={stats.ordersToday > 0 ? Math.min((stats.ordersToday / 10) * 100, 100) : undefined}
+          changeLabel={stats.ordersToday > 0 ? `${stats.ordersToday} of 10 daily goal` : undefined}
         />
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="lg:col-span-2 bg-card border border-border rounded-xl"
-        >
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl">
           <div className="flex items-center justify-between p-5 border-b border-border">
             <h2 className="text-base font-medium text-foreground">Recent Orders</h2>
             <Button variant="ghost" size="sm" className="h-8 text-xs text-muted-foreground hover:text-foreground">
@@ -289,15 +295,10 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Credits & Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="space-y-4"
-        >
+        <div className="space-y-4">
           {/* Credits Card */}
           <div className="bg-card border border-border rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
@@ -331,15 +332,13 @@ export default function Dashboard() {
               </div>
               
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${creditsPercent}%` }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                <div
                   className={cn(
-                    "h-full rounded-full",
+                    "h-full rounded-full transition-all",
                     creditsPercent > 50 ? "bg-primary" : 
                     creditsPercent > 20 ? "bg-amber-500" : "bg-red-500"
                   )}
+                  style={{ width: `${creditsPercent}%` }}
                 />
               </div>
               
@@ -366,51 +365,9 @@ export default function Dashboard() {
               />
             </div>
           </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-// Clean Stat Card Component
-function StatCard({ 
-  title, 
-  value, 
-  icon: Icon, 
-  positive, 
-  accent,
-  delay = 0 
-}: { 
-  title: string;
-  value: string | number;
-  icon: any;
-  positive?: boolean;
-  accent?: boolean;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay }}
-      className="bg-card border border-border rounded-xl p-5 hover:border-primary/20 transition-colors"
-    >
-      <div className="flex items-center justify-between mb-3">
-        <div className={cn(
-          "w-9 h-9 rounded-lg flex items-center justify-center",
-          positive ? "bg-emerald-500/10" :
-          accent ? "bg-amber-500/10" : "bg-secondary"
-        )}>
-          <Icon className={cn(
-            "h-4 w-4",
-            positive ? "text-emerald-400" :
-            accent ? "text-amber-400" : "text-muted-foreground"
-          )} />
         </div>
       </div>
-      <p className="text-2xl font-display font-semibold text-foreground">{value}</p>
-      <p className="text-xs text-muted-foreground mt-1">{title}</p>
-    </motion.div>
+    </div>
   );
 }
 
