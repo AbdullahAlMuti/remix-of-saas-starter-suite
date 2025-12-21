@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   Plus,
@@ -43,6 +43,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { useRealtimePlans } from '@/hooks/useRealtimeSync';
 
 interface Plan {
   id: string;
@@ -86,6 +87,13 @@ export default function AdminPlans() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deletingPlan, setDeletingPlan] = useState<Plan | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const fetchPlansCallback = useCallback(() => {
+    fetchPlans();
+  }, []);
+
+  // Subscribe to realtime plan changes
+  useRealtimePlans(fetchPlansCallback);
 
   useEffect(() => {
     fetchPlans();

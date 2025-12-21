@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -46,6 +46,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 
 interface UserWithDetails {
   id: string;
@@ -78,6 +79,20 @@ export default function AdminUsers() {
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [newRole, setNewRole] = useState<string>('user');
+
+  const fetchUsersCallback = useCallback(() => {
+    fetchUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, filterActive, filterRole]);
+
+  // Subscribe to realtime profile and role changes
+  useRealtimeSync(
+    [
+      { table: 'profiles', event: '*', callback: fetchUsersCallback },
+      { table: 'user_roles', event: '*', callback: fetchUsersCallback },
+    ],
+    [fetchUsersCallback]
+  );
 
   useEffect(() => {
     fetchUsers();

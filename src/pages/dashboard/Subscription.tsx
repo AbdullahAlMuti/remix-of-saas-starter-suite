@@ -1,9 +1,12 @@
+import { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Crown, Zap, Rocket, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useRealtimePlans, useRealtimeUserPlan } from '@/hooks/useRealtimeSync';
+import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 
 const planIcons = {
@@ -14,6 +17,7 @@ const planIcons = {
 };
 
 export default function Subscription() {
+  const { user } = useAuth();
   const { 
     planName, 
     subscribed, 
@@ -23,6 +27,14 @@ export default function Subscription() {
     openCustomerPortal,
     checkSubscription 
   } = useSubscription();
+
+  const refreshCallback = useCallback(() => {
+    checkSubscription();
+  }, [checkSubscription]);
+
+  // Subscribe to realtime changes
+  useRealtimePlans(refreshCallback);
+  useRealtimeUserPlan(user?.id, refreshCallback);
 
   if (isLoading) {
     return (
