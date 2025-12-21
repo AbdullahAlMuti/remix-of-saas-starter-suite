@@ -10,6 +10,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/dashboard/Orders";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             
             {/* Protected Dashboard Routes */}
