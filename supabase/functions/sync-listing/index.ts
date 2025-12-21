@@ -2,16 +2,20 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
 };
 
 interface ListingPayload {
+  // Support both formats: extension format and direct format
   title: string;
   sku?: string;
-  ebay_price: number;
-  amazon_price: number;
-  amazon_asin?: string;
+  ebayPrice?: number;
+  ebay_price?: number;
+  amazonPrice?: number;
+  amazon_price?: number;
+  amazonUrl?: string;
   amazon_url?: string;
+  amazon_asin?: string;
   ebay_item_id?: string;
   status?: string;
 }
@@ -25,32 +29,41 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
-    // Get authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    // Support both Authorization header and x-api-key (for extension compatibility)
+    let authToken = req.headers.get('Authorization')?.replace('Bearer ', '');
+    const apiKey = req.headers.get('x-api-key');
+    
+    // If x-api-key is provided and looks like a JWT, use it
+    if (!authToken && apiKey && apiKey.includes('.')) {
+      authToken = apiKey;
+    }
+    
+    if (!authToken) {
+      console.log('[sync-listing] No auth token found');
       return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
+        JSON.stringify({ error: 'Missing authorization' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     // Create client with user's token to get user ID
-    const supabaseUser = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
-      global: { headers: { Authorization: authHeader } }
+    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${authToken}` } }
     });
 
     const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
     
     if (userError || !user) {
-      console.error('Auth error:', userError);
+      console.error('[sync-listing] Auth error:', userError);
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
+        JSON.stringify({ error: 'Unauthorized', details: userError?.message }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log(`[sync-listing] User authenticated: ${user.id}`);
+    console.log(`[sync-listing] User authenticated: ${user.id} (${user.email})`);
 
     // Use service role for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -66,32 +79,56 @@ Deno.serve(async (req) => {
       const results = [];
       
       for (const listing of listings) {
+        // Normalize field names (support both camelCase and snake_case)
+        const normalizedListing = {
+          title: listing.title,
+          sku: listing.sku || null,
+          ebay_price: listing.ebayPrice ?? listing.ebay_price ?? null,
+          amazon_price: listing.amazonPrice ?? listing.amazon_price ?? null,
+          amazon_url: listing.amazonUrl ?? listing.amazon_url ?? null,
+          amazon_asin: listing.amazon_asin || null,
+          ebay_item_id: listing.ebay_item_id || null,
+          status: listing.status || 'active',
+        };
+
         // Validate required fields
-        if (!listing.title) {
+        if (!normalizedListing.title) {
           results.push({ error: 'Title is required', listing });
           continue;
         }
 
-        // Check if listing already exists by SKU or ASIN
+        console.log(`[sync-listing] Processing: ${normalizedListing.title}`);
+
+        // Check if listing already exists by SKU or Amazon URL
         let existingListing = null;
         
-        if (listing.sku) {
+        if (normalizedListing.sku) {
           const { data } = await supabase
             .from('listings')
             .select('id')
             .eq('user_id', user.id)
-            .eq('sku', listing.sku)
-            .single();
+            .eq('sku', normalizedListing.sku)
+            .maybeSingle();
           existingListing = data;
         }
         
-        if (!existingListing && listing.amazon_asin) {
+        if (!existingListing && normalizedListing.amazon_asin) {
           const { data } = await supabase
             .from('listings')
             .select('id')
             .eq('user_id', user.id)
-            .eq('amazon_asin', listing.amazon_asin)
-            .single();
+            .eq('amazon_asin', normalizedListing.amazon_asin)
+            .maybeSingle();
+          existingListing = data;
+        }
+
+        if (!existingListing && normalizedListing.amazon_url) {
+          const { data } = await supabase
+            .from('listings')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('amazon_url', normalizedListing.amazon_url)
+            .maybeSingle();
           existingListing = data;
         }
 
@@ -100,14 +137,7 @@ Deno.serve(async (req) => {
           const { data, error } = await supabase
             .from('listings')
             .update({
-              title: listing.title,
-              sku: listing.sku || null,
-              ebay_price: listing.ebay_price || null,
-              amazon_price: listing.amazon_price || null,
-              amazon_asin: listing.amazon_asin || null,
-              amazon_url: listing.amazon_url || null,
-              ebay_item_id: listing.ebay_item_id || null,
-              status: listing.status || 'active',
+              ...normalizedListing,
               updated_at: new Date().toISOString(),
             })
             .eq('id', existingListing.id)
@@ -127,14 +157,7 @@ Deno.serve(async (req) => {
             .from('listings')
             .insert({
               user_id: user.id,
-              title: listing.title,
-              sku: listing.sku || null,
-              ebay_price: listing.ebay_price || null,
-              amazon_price: listing.amazon_price || null,
-              amazon_asin: listing.amazon_asin || null,
-              amazon_url: listing.amazon_url || null,
-              ebay_item_id: listing.ebay_item_id || null,
-              status: listing.status || 'active',
+              ...normalizedListing,
             })
             .select()
             .single();
@@ -149,17 +172,21 @@ Deno.serve(async (req) => {
         }
       }
 
+      const response = { 
+        success: true, 
+        results,
+        summary: {
+          total: listings.length,
+          created: results.filter(r => r.action === 'created').length,
+          updated: results.filter(r => r.action === 'updated').length,
+          errors: results.filter(r => r.error).length,
+        }
+      };
+
+      console.log(`[sync-listing] Complete:`, response.summary);
+
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          results,
-          summary: {
-            total: listings.length,
-            created: results.filter(r => r.action === 'created').length,
-            updated: results.filter(r => r.action === 'updated').length,
-            errors: results.filter(r => r.error).length,
-          }
-        }),
+        JSON.stringify(response),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
