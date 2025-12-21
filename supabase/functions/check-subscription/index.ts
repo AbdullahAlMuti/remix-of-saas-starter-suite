@@ -83,12 +83,19 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       stripeSubscriptionId = subscription.id;
+      
+      // Safely convert subscription end date
+      if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
+        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      }
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
-      productId = subscription.items.data[0].price.product as string;
-      planName = productToPlan[productId] || 'unknown';
+      // Safely get product ID
+      if (subscription.items?.data?.[0]?.price?.product) {
+        productId = subscription.items.data[0].price.product as string;
+        planName = productToPlan[productId] || 'unknown';
+      }
       logStep("Determined subscription tier", { productId, planName });
 
       // Update user_plans table
