@@ -50,6 +50,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { format } from "date-fns";
 
 interface Listing {
@@ -137,6 +138,28 @@ export default function Listings() {
   useEffect(() => {
     fetchListings();
   }, [user]);
+
+  // Real-time sync for listings
+  useRealtimeSync(
+    user ? [
+      {
+        table: 'listings',
+        event: '*',
+        filter: `user_id=eq.${user.id}`,
+        callback: (payload) => {
+          console.log('[Realtime] Listing changed:', payload.eventType);
+          fetchListings();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Listing",
+              description: "A new listing was synced from extension",
+            });
+          }
+        },
+      },
+    ] : [],
+    [user?.id]
+  );
 
   // Filter listings when search or status filter changes
   useEffect(() => {

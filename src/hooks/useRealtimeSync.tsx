@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-type TableName = 'profiles' | 'notices' | 'plans' | 'user_plans' | 'user_roles';
+type TableName = 'profiles' | 'notices' | 'plans' | 'user_plans' | 'user_roles' | 'listings';
 type EventType = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
 
 interface RealtimeSubscription {
