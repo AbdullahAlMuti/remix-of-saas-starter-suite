@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Zap, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +24,28 @@ const Navbar = () => {
     { label: "Pricing", href: "#pricing" },
     { label: "Testimonials", href: "#testimonials" },
   ];
+
+  const handleLogin = () => {
+    navigate('/auth');
+  };
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      // Scroll to pricing section
+      const pricingSection = document.getElementById('pricing');
+      if (pricingSection) {
+        pricingSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        navigate('/#pricing');
+      }
+    }
+  };
+
+  const handleDashboard = () => {
+    navigate('/dashboard');
+  };
 
   return (
     <nav
@@ -54,12 +80,20 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" size="sm">
-              Log In
-            </Button>
-            <Button variant="default" size="sm">
-              Get Started
-            </Button>
+            {user ? (
+              <Button variant="default" size="sm" onClick={handleDashboard}>
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={handleLogin}>
+                  Log In
+                </Button>
+                <Button variant="default" size="sm" onClick={handleGetStarted}>
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -90,12 +124,20 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="flex gap-4 mt-4">
-                <Button variant="ghost" size="sm" className="flex-1">
-                  Log In
-                </Button>
-                <Button variant="default" size="sm" className="flex-1">
-                  Get Started
-                </Button>
+                {user ? (
+                  <Button variant="default" size="sm" className="flex-1" onClick={handleDashboard}>
+                    Dashboard
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" className="flex-1" onClick={handleLogin}>
+                      Log In
+                    </Button>
+                    <Button variant="default" size="sm" className="flex-1" onClick={handleGetStarted}>
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
