@@ -123,25 +123,6 @@ export function DashboardSidebar() {
                 </Link>
               );
             })}
-            
-            {/* Link back to user dashboard */}
-            <div className="pt-4 mt-4 border-t border-sidebar-border">
-              {!isCollapsed && (
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
-                  Switch
-                </p>
-              )}
-              <Link
-                to="/dashboard"
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
-                  'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                )}
-              >
-                <LayoutDashboard className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-                {!isCollapsed && <span className="font-medium">User Dashboard</span>}
-              </Link>
-            </div>
           </div>
         ) : (
           /* Show Main Nav when in user dashboard */
