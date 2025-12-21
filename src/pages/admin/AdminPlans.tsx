@@ -33,7 +33,18 @@ interface Plan {
   credits_per_month: number;
   max_listings: number;
   max_auto_orders: number;
-  features: unknown;
+  features: string[] | null;
+  is_active: boolean;
+}
+
+interface PlanFormData {
+  name: string;
+  display_name: string;
+  price_monthly: number;
+  price_yearly: number;
+  credits_per_month: number;
+  max_listings: number;
+  max_auto_orders: number;
   is_active: boolean;
 }
 
@@ -51,11 +62,25 @@ export default function AdminPlans() {
     try {
       const { data, error } = await supabase
         .from('plans')
-        .select('*')
+        .select('id, name, display_name, price_monthly, price_yearly, credits_per_month, max_listings, max_auto_orders, features, is_active')
         .order('price_monthly', { ascending: true });
 
       if (error) throw error;
-      setPlans(data || []);
+      
+      const mappedPlans: Plan[] = (data || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        display_name: p.display_name,
+        price_monthly: p.price_monthly,
+        price_yearly: p.price_yearly,
+        credits_per_month: p.credits_per_month,
+        max_listings: p.max_listings,
+        max_auto_orders: p.max_auto_orders,
+        features: Array.isArray(p.features) ? p.features as string[] : null,
+        is_active: p.is_active,
+      }));
+      
+      setPlans(mappedPlans);
     } catch (error) {
       console.error('Error fetching plans:', error);
       toast.error('Failed to fetch plans');
@@ -64,12 +89,21 @@ export default function AdminPlans() {
     }
   };
 
-  const handleSavePlan = async (plan: Partial<Plan>) => {
+  const handleSavePlan = async (formData: PlanFormData) => {
     try {
       if (editingPlan?.id) {
         const { error } = await supabase
           .from('plans')
-          .update(plan)
+          .update({
+            name: formData.name,
+            display_name: formData.display_name,
+            price_monthly: formData.price_monthly,
+            price_yearly: formData.price_yearly,
+            credits_per_month: formData.credits_per_month,
+            max_listings: formData.max_listings,
+            max_auto_orders: formData.max_auto_orders,
+            is_active: formData.is_active,
+          })
           .eq('id', editingPlan.id);
 
         if (error) throw error;
@@ -77,7 +111,16 @@ export default function AdminPlans() {
       } else {
         const { error } = await supabase
           .from('plans')
-          .insert([plan]);
+          .insert([{
+            name: formData.name,
+            display_name: formData.display_name,
+            price_monthly: formData.price_monthly,
+            price_yearly: formData.price_yearly,
+            credits_per_month: formData.credits_per_month,
+            max_listings: formData.max_listings,
+            max_auto_orders: formData.max_auto_orders,
+            is_active: formData.is_active,
+          }]);
 
         if (error) throw error;
         toast.success('Plan created successfully');
@@ -250,10 +293,10 @@ function PlanForm({
   onCancel,
 }: {
   plan: Plan | null;
-  onSave: (plan: Partial<Plan>) => void;
+  onSave: (formData: PlanFormData) => void;
   onCancel: () => void;
 }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PlanFormData>({
     name: plan?.name || '',
     display_name: plan?.display_name || '',
     price_monthly: plan?.price_monthly || 0,
