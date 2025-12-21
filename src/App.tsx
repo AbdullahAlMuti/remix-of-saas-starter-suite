@@ -10,6 +10,8 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Orders from "./pages/dashboard/Orders";
+import Listings from "./pages/dashboard/Listings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -36,8 +38,8 @@ const App = () => (
               </ProtectedRoute>
             }>
               <Route index element={<Dashboard />} />
-              <Route path="listings" element={<Dashboard />} />
-              <Route path="orders" element={<Dashboard />} />
+              <Route path="listings" element={<Listings />} />
+              <Route path="orders" element={<Orders />} />
               <Route path="alerts" element={<Dashboard />} />
               <Route path="prompts" element={<Dashboard />} />
               <Route path="credits" element={<Dashboard />} />
