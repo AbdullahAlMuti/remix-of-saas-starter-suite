@@ -1,6 +1,7 @@
+import { forwardRef } from "react";
 import { Zap } from "lucide-react";
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
@@ -30,7 +31,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="py-16 border-t border-border">
+    <footer ref={ref} className="py-16 border-t border-border">
       <div className="container px-4">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
@@ -112,6 +113,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;
