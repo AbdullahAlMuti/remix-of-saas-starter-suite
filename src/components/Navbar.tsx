@@ -3,6 +3,7 @@ import { Zap, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -79,7 +80,8 @@ const Navbar = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             {user ? (
               <Button variant="default" size="sm" onClick={handleDashboard}>
                 Dashboard
@@ -123,7 +125,8 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <div className="flex gap-4 mt-4">
+              <div className="flex items-center gap-4 mt-4">
+                <ThemeToggle />
                 {user ? (
                   <Button variant="default" size="sm" className="flex-1" onClick={handleDashboard}>
                     Dashboard
