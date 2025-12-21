@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Package, 
@@ -28,6 +29,7 @@ interface DashboardStats {
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { profile, user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     activeListings: 0,
@@ -160,7 +162,7 @@ export default function Dashboard() {
             Here's what's happening with your dropshipping business
           </p>
         </div>
-        <Button variant="hero">
+        <Button variant="hero" onClick={() => navigate('/dashboard/subscription')}>
           <Sparkles className="h-5 w-5" />
           Upgrade Plan
         </Button>
