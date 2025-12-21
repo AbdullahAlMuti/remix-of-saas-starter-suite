@@ -86,8 +86,16 @@ serve(async (req) => {
       stripeSubscriptionId = subscription.id;
       
       // Safely convert subscription end date
-      if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
-        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      const cpe = (subscription as any).current_period_end;
+      if (Number.isFinite(cpe)) {
+        try {
+          subscriptionEnd = new Date(cpe * 1000).toISOString();
+        } catch (e) {
+          logStep("Failed to parse current_period_end", { current_period_end: cpe, type: typeof cpe });
+          subscriptionEnd = null;
+        }
+      } else {
+        logStep("Missing/invalid current_period_end", { current_period_end: cpe, type: typeof cpe });
       }
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
 
