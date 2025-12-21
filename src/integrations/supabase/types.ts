@@ -14,16 +14,498 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      auth_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          expires_at: string
+          used: boolean | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          expires_at: string
+          used?: boolean | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          expires_at?: string
+          used?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      auto_orders: {
+        Row: {
+          amazon_asin: string | null
+          amazon_order_id: string | null
+          amazon_url: string | null
+          buyer_address: Json | null
+          buyer_name: string | null
+          created_at: string | null
+          details: Json | null
+          ebay_order_id: string | null
+          ebay_sku: string | null
+          error_message: string | null
+          id: string
+          item_price: number | null
+          listing_id: string | null
+          profit: number | null
+          risk_score: number | null
+          shipping_cost: number | null
+          status: string | null
+          total_cost: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amazon_asin?: string | null
+          amazon_order_id?: string | null
+          amazon_url?: string | null
+          buyer_address?: Json | null
+          buyer_name?: string | null
+          created_at?: string | null
+          details?: Json | null
+          ebay_order_id?: string | null
+          ebay_sku?: string | null
+          error_message?: string | null
+          id?: string
+          item_price?: number | null
+          listing_id?: string | null
+          profit?: number | null
+          risk_score?: number | null
+          shipping_cost?: number | null
+          status?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amazon_asin?: string | null
+          amazon_order_id?: string | null
+          amazon_url?: string | null
+          buyer_address?: Json | null
+          buyer_name?: string | null
+          created_at?: string | null
+          details?: Json | null
+          ebay_order_id?: string | null
+          ebay_sku?: string | null
+          error_message?: string | null
+          id?: string
+          item_price?: number | null
+          listing_id?: string | null
+          profit?: number | null
+          risk_score?: number | null
+          shipping_cost?: number | null
+          status?: string | null
+          total_cost?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auto_orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      extension_sessions: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_name: string | null
+          extension_id: string
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          last_seen: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          extension_id: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_seen?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          extension_id?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_seen?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      inventory_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          id: string
+          listing_id: string | null
+          message: string | null
+          new_value: string | null
+          old_value: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          message?: string | null
+          new_value?: string | null
+          old_value?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          message?: string | null
+          new_value?: string | null
+          old_value?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_alerts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          amazon_asin: string | null
+          amazon_price: number | null
+          amazon_url: string | null
+          auto_order_enabled: boolean | null
+          created_at: string | null
+          ebay_item_id: string | null
+          ebay_price: number | null
+          id: string
+          inventory_status: string | null
+          last_checked: string | null
+          pricing_rule: Json | null
+          sku: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amazon_asin?: string | null
+          amazon_price?: number | null
+          amazon_url?: string | null
+          auto_order_enabled?: boolean | null
+          created_at?: string | null
+          ebay_item_id?: string | null
+          ebay_price?: number | null
+          id?: string
+          inventory_status?: string | null
+          last_checked?: string | null
+          pricing_rule?: Json | null
+          sku?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amazon_asin?: string | null
+          amazon_price?: number | null
+          amazon_url?: string | null
+          auto_order_enabled?: boolean | null
+          created_at?: string | null
+          ebay_item_id?: string | null
+          ebay_price?: number | null
+          id?: string
+          inventory_status?: string | null
+          last_checked?: string | null
+          pricing_rule?: Json | null
+          sku?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          created_at: string | null
+          credits_per_month: number | null
+          display_name: string
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          max_auto_orders: number | null
+          max_listings: number | null
+          name: string
+          price_monthly: number | null
+          price_yearly: number | null
+          stripe_price_id_monthly: string | null
+          stripe_price_id_yearly: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credits_per_month?: number | null
+          display_name: string
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_auto_orders?: number | null
+          max_listings?: number | null
+          name: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credits_per_month?: number | null
+          display_name?: string
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_auto_orders?: number | null
+          max_listings?: number | null
+          name?: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          stripe_price_id_monthly?: string | null
+          stripe_price_id_yearly?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          credits: number | null
+          email: string
+          full_name: string | null
+          id: string
+          is_active: boolean | null
+          last_login: string | null
+          plan_id: string | null
+          settings: Json | null
+          stripe_customer_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          credits?: number | null
+          email: string
+          full_name?: string | null
+          id: string
+          is_active?: boolean | null
+          last_login?: string | null
+          plan_id?: string | null
+          settings?: Json | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          credits?: number | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_login?: string | null
+          plan_id?: string | null
+          settings?: Json | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          prompt_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          prompt_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          prompt_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          credits_used: number | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          credits_used?: number | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          credits_used?: number | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_plans: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan_id: string
+          status: string | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_id: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_id?: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_plans_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +632,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin", "super_admin"],
+    },
   },
 } as const
