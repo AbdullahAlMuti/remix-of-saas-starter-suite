@@ -52,63 +52,71 @@ export default function Dashboard() {
     if (!user) return;
 
     try {
-      // Fetch listings count
-      const { count: listingsCount } = await supabase
-        .from('listings')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'active');
-
-      // Fetch pending orders
-      const { count: ordersCount } = await supabase
-        .from('auto_orders')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'PENDING');
-
-      // Fetch unread alerts
-      const { count: alertsCount } = await supabase
-        .from('inventory_alerts')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'UNREAD');
-
-      // Fetch recent orders
-      const { data: orders } = await supabase
-        .from('auto_orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      // Calculate total profit from completed orders
-      const { data: completedOrders } = await supabase
-        .from('auto_orders')
-        .select('profit')
-        .eq('user_id', user.id)
-        .eq('status', 'COMPLETED');
-
-      const totalProfit = completedOrders?.reduce((acc, order) => acc + (Number(order.profit) || 0), 0) || 0;
-
-      // Orders today
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count: todayOrdersCount } = await supabase
-        .from('auto_orders')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .gte('created_at', today.toISOString());
+
+      // Execute all queries in parallel for better performance
+      const [
+        listingsResult,
+        pendingOrdersResult,
+        alertsResult,
+        recentOrdersResult,
+        completedOrdersResult,
+        todayOrdersResult,
+      ] = await Promise.all([
+        // Active listings count
+        supabase
+          .from('listings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'active'),
+        // Pending orders count
+        supabase
+          .from('auto_orders')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'PENDING'),
+        // Unread alerts count
+        supabase
+          .from('inventory_alerts')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('status', 'UNREAD'),
+        // Recent orders
+        supabase
+          .from('auto_orders')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(5),
+        // Completed orders for profit
+        supabase
+          .from('auto_orders')
+          .select('profit')
+          .eq('user_id', user.id)
+          .eq('status', 'COMPLETED'),
+        // Orders today
+        supabase
+          .from('auto_orders')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('created_at', today.toISOString()),
+      ]);
+
+      const totalProfit = completedOrdersResult.data?.reduce(
+        (acc, order) => acc + (Number(order.profit) || 0), 0
+      ) || 0;
 
       setStats({
-        activeListings: listingsCount || 0,
-        pendingOrders: ordersCount || 0,
-        unreadAlerts: alertsCount || 0,
+        activeListings: listingsResult.count || 0,
+        pendingOrders: pendingOrdersResult.count || 0,
+        unreadAlerts: alertsResult.count || 0,
         creditsRemaining: profile?.credits || 0,
         totalProfit,
-        ordersToday: todayOrdersCount || 0,
+        ordersToday: todayOrdersResult.count || 0,
       });
 
-      setRecentOrders(orders || []);
+      setRecentOrders(recentOrdersResult.data || []);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
