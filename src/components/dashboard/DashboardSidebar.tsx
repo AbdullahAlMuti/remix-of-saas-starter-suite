@@ -18,6 +18,8 @@ import {
   CreditCard,
   Megaphone,
   ClipboardList,
+  DollarSign,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -43,6 +45,8 @@ const adminNavItems: NavItem[] = [
   { icon: BarChart3, label: 'Dashboard', href: '/admin', adminOnly: true },
   { icon: Users, label: 'Users', href: '/admin/users', adminOnly: true },
   { icon: CreditCard, label: 'Plans', href: '/admin/plans', adminOnly: true },
+  { icon: DollarSign, label: 'Payments', href: '/admin/payments', adminOnly: true },
+  { icon: ShieldCheck, label: 'Roles', href: '/admin/roles', adminOnly: true },
   { icon: Megaphone, label: 'Notices', href: '/admin/notices', adminOnly: true },
   { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit', adminOnly: true },
   { icon: Shield, label: 'Settings', href: '/admin/settings', adminOnly: true },
