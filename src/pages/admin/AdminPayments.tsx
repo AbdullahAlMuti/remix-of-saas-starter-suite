@@ -162,14 +162,11 @@ export default function AdminPayments() {
     try {
       setIsLoading(true);
 
+      // Fetch user_plans with plan relation (plan_id has FK)
       let query = supabase
         .from('user_plans')
         .select(`
           *,
-          profiles:user_id (
-            email,
-            full_name
-          ),
           plans:plan_id (
             name,
             display_name,
@@ -191,9 +188,25 @@ export default function AdminPayments() {
 
       if (error) throw error;
 
+      // Fetch profiles separately since there's no FK relationship
+      const userIds = data?.map(item => item.user_id).filter(Boolean) || [];
+      let profilesMap: Record<string, { email: string; full_name: string | null }> = {};
+      
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, email, full_name')
+          .in('id', userIds);
+        
+        profilesMap = (profiles || []).reduce((acc, p) => {
+          acc[p.id] = { email: p.email, full_name: p.full_name };
+          return acc;
+        }, {} as Record<string, { email: string; full_name: string | null }>);
+      }
+
       const formattedData = data?.map((item) => ({
         ...item,
-        profile: item.profiles as unknown as UserPlan['profile'],
+        profile: profilesMap[item.user_id] || { email: 'Unknown', full_name: null },
         plan: item.plans as unknown as UserPlan['plan'],
       })) || [];
 
