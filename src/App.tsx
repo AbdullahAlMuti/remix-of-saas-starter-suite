@@ -16,6 +16,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/dashboard/Orders";
 import Listings from "./pages/dashboard/Listings";
+import ExtensionConnect from "./pages/dashboard/ExtensionConnect";
 import Subscription from "./pages/dashboard/Subscription";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="prompts" element={<Dashboard />} />
               <Route path="credits" element={<Dashboard />} />
               <Route path="subscription" element={<Subscription />} />
+              <Route path="extension" element={<ExtensionConnect />} />
               <Route path="settings" element={<Dashboard />} />
             </Route>
 
