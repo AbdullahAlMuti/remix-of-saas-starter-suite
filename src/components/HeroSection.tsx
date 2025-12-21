@@ -1,8 +1,24 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Shield, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStartAutomating = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      // Scroll to pricing section
+      const pricingSection = document.getElementById('pricing');
+      if (pricingSection) {
+        pricingSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden mesh-gradient noise-overlay">
       {/* Animated background orbs */}
@@ -37,7 +53,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="animate-slide-up flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Button variant="hero" size="xl">
+            <Button variant="hero" size="xl" onClick={handleStartAutomating}>
               Start Automating Now
               <ArrowRight className="w-5 h-5" />
             </Button>

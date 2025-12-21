@@ -17,13 +17,19 @@ const PricingSection = () => {
   const { createCheckout, planName: currentPlanName } = useSubscription();
 
   const handlePlanSelect = async (planKey: string) => {
+    const plan = PLANS[planKey as keyof typeof PLANS];
+    
     if (!user) {
-      // Redirect to auth with plan selection intent
-      navigate('/auth', { state: { from: { pathname: '/dashboard/subscription' }, selectedPlan: planKey } });
+      // Redirect to registration page with plan selection
+      if (plan.stripePriceId) {
+        navigate('/register', { state: { selectedPlan: planKey } });
+      } else {
+        navigate('/auth');
+      }
       return;
     }
 
-    const plan = PLANS[planKey as keyof typeof PLANS];
+    // User is logged in - go directly to checkout or subscription page
     if (plan.stripePriceId) {
       await createCheckout(planKey as keyof typeof PLANS);
     } else {
