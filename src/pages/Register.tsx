@@ -43,10 +43,15 @@ export default function Register() {
 
   useEffect(() => {
     if (user) {
-      // User is already logged in, redirect to subscription page
-      navigate('/dashboard/subscription', { replace: true, state: { selectedPlan: selectedPlanKey } });
+      // User is already logged in, redirect to payment if paid plan selected
+      if (selectedPlan.priceMonthly > 0) {
+        navigate('/payment-required', { replace: true });
+      } else {
+        localStorage.removeItem('selectedPlan');
+        navigate('/dashboard', { replace: true });
+      }
     }
-  }, [user, navigate, selectedPlanKey]);
+  }, [user, navigate, selectedPlan.priceMonthly]);
 
   const validateForm = () => {
     const newErrors: { email?: string; confirmEmail?: string; password?: string; terms?: string } = {};
@@ -83,9 +88,15 @@ export default function Register() {
     try {
       const { error } = await signUp(email, password, fullName);
       if (!error) {
-        toast.success('Account created! Please check your email to verify.');
-        // Redirect to subscription page with plan selection
-        navigate('/dashboard/subscription', { state: { selectedPlan: selectedPlanKey } });
+        toast.success('Account created! Redirecting to payment...');
+        // Redirect to payment required page for paid plans
+        if (selectedPlan.priceMonthly > 0) {
+          navigate('/payment-required');
+        } else {
+          // Free plan - go directly to dashboard
+          localStorage.removeItem('selectedPlan');
+          navigate('/dashboard');
+        }
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred');
