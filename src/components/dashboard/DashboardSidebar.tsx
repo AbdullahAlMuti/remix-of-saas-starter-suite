@@ -26,6 +26,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavItem {
   icon: React.ElementType;
@@ -199,6 +200,14 @@ export function DashboardSidebar() {
         )}
         
         <div className="space-y-1">
+          <div className={cn(
+            'flex items-center gap-3 px-3 py-2.5 rounded-xl',
+            isCollapsed && 'justify-center'
+          )}>
+            <ThemeToggle />
+            {!isCollapsed && <span className="font-medium text-sidebar-foreground">Theme</span>}
+          </div>
+
           <Link
             to="/dashboard/settings"
             className={cn(
