@@ -10,7 +10,70 @@
 
 @layer base {
   :root {
-    /* Core brand colors - Deep tech indigo palette */
+    /* Light mode - Clean professional palette */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 240 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    /* Primary - Electric indigo */
+    --primary: 252 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft purple */
+    --secondary: 252 20% 94%;
+    --secondary-foreground: 252 40% 30%;
+
+    --muted: 240 10% 96%;
+    --muted-foreground: 240 5% 45%;
+
+    /* Accent - Vibrant cyan */
+    --accent: 180 80% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 90%;
+    --input: 240 10% 90%;
+    --ring: 252 85% 55%;
+
+    --radius: 0.75rem;
+
+    /* Custom Snipinal tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(252, 85%, 55%) 0%, hsl(280, 80%, 55%) 50%, hsl(330, 85%, 60%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(252, 40%, 96%) 0%, hsl(0, 0%, 100%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(252, 20%, 98%) 0%, hsl(252, 15%, 95%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(180, 80%, 45%) 0%, hsl(252, 85%, 55%) 100%);
+    
+    --glow-primary: 0 4px 20px hsl(252, 85%, 55%, 0.15);
+    --glow-accent: 0 4px 15px hsl(180, 80%, 45%, 0.12);
+    
+    --glass-bg: hsl(0, 0%, 100%, 0.8);
+    --glass-border: hsl(240, 10%, 85%, 0.5);
+
+    /* Platform brand colors */
+    --amazon-orange: 33 100% 50%;
+    --ebay-blue: 211 100% 50%;
+    --success: 142 76% 36%;
+
+    /* Sidebar */
+    --sidebar-background: 252 30% 98%;
+    --sidebar-foreground: 240 10% 20%;
+    --sidebar-primary: 252 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 252 20% 94%;
+    --sidebar-accent-foreground: 252 40% 30%;
+    --sidebar-border: 240 10% 90%;
+    --sidebar-ring: 252 85% 55%;
+  }
+
+  .dark {
+    /* Dark mode - Deep tech indigo palette */
     --background: 240 20% 3%;
     --foreground: 210 40% 98%;
 
@@ -35,14 +98,12 @@
     --accent: 180 100% 50%;
     --accent-foreground: 240 20% 3%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 252 20% 18%;
     --input: 252 20% 18%;
     --ring: 252 100% 65%;
-
-    --radius: 0.75rem;
 
     /* Custom Snipinal tokens */
     --gradient-primary: linear-gradient(135deg, hsl(252, 100%, 65%) 0%, hsl(280, 100%, 60%) 50%, hsl(330, 100%, 65%) 100%);
@@ -71,36 +132,6 @@
     --sidebar-border: 252 20% 15%;
     --sidebar-ring: 252 100% 65%;
   }
-
-  .dark {
-    --background: 240 20% 3%;
-    --foreground: 210 40% 98%;
-    --card: 240 15% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 240 15% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 252 100% 65%;
-    --primary-foreground: 240 20% 3%;
-    --secondary: 252 30% 15%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 240 15% 12%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 180 100% 50%;
-    --accent-foreground: 240 20% 3%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 252 20% 18%;
-    --input: 252 20% 18%;
-    --ring: 252 100% 65%;
-    --sidebar-background: 240 15% 6%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 252 100% 65%;
-    --sidebar-primary-foreground: 240 20% 3%;
-    --sidebar-accent: 252 30% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 252 20% 15%;
-    --sidebar-ring: 252 100% 65%;
-  }
 }
 
 @layer base {
@@ -108,9 +139,14 @@
     @apply border-border;
   }
 
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
