@@ -1,9 +1,10 @@
+import { forwardRef } from "react";
 import { ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const CTASection = () => {
+const CTASection = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <section className="py-24 relative">
+    <section ref={ref} className="py-24 relative">
       <div className="container px-4">
         <div className="relative max-w-4xl mx-auto text-center">
           {/* Background glow */}
@@ -43,6 +44,8 @@ const CTASection = () => {
       </div>
     </section>
   );
-};
+});
+
+CTASection.displayName = "CTASection";
 
 export default CTASection;
