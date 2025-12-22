@@ -34,13 +34,15 @@ serve(async (req) => {
 
     console.log(`[CREATE-STRIPE-PRICE] Product created: ${product.id}`);
 
-    // Create a one-time price for the trial
+    // Create a recurring monthly price (required for subscription checkout)
     const price = await stripe.prices.create({
       product: product.id,
       unit_amount: Math.round(priceAmount * 100), // Convert to cents
       currency: "usd",
+      recurring: {
+        interval: "month",
+      },
     });
-
     console.log(`[CREATE-STRIPE-PRICE] Price created: ${price.id}`);
 
     // Update the database with the new price ID
