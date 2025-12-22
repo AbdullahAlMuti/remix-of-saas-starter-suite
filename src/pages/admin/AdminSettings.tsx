@@ -10,8 +10,8 @@ import AmazonAPISettings from '@/components/admin/AmazonAPISettings';
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
-    siteName: 'Snipinal',
-    supportEmail: 'support@snipinal.com',
+    siteName: 'SellerSuit',
+    supportEmail: 'support@sellersuit.com',
     enableRegistration: true,
     requireEmailVerification: true,
     maxSessionsPerUser: 5,

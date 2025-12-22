@@ -232,7 +232,7 @@ export default function Register() {
                   className="mt-1"
                 />
                 <Label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
-                  I agree to Snipinal's{' '}
+                  I agree to SellerSuit's{' '}
                   <a href="/terms" className="text-primary hover:underline">Terms & Conditions</a>
                   {' '}and{' '}
                   <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>.

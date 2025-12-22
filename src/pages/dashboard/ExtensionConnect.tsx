@@ -199,7 +199,7 @@ chrome.storage.local.set({ saasToken: "${token}" }, () => {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Open your extension's service worker console (chrome://extensions → Snipinal → Inspect views: service worker) and paste this code.
+                Open your extension's service worker console (chrome://extensions → SellerSuit → Inspect views: service worker) and paste this code.
               </p>
             </div>
 
