@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.generate-titles]
 verify_jwt = false
+
+[functions.get-calculator-settings]
+verify_jwt = false
