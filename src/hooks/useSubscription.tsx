@@ -87,7 +87,7 @@ export function useSubscription() {
     }
   }, [session?.access_token]);
 
-  const createCheckout = async (planName: keyof typeof PLANS) => {
+  const createCheckout = async (planName: keyof typeof PLANS, couponCode?: string) => {
     if (!session?.access_token) {
       toast.error('Please log in to subscribe');
       return;
@@ -104,6 +104,7 @@ export function useSubscription() {
         body: {
           priceId: plan.stripePriceId,
           planId: planName,
+          couponCode: couponCode || undefined,
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -112,12 +113,17 @@ export function useSubscription() {
 
       if (error) throw error;
 
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
       if (data?.url) {
         window.open(data.url, '_blank');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating checkout:', error);
-      toast.error('Failed to create checkout session');
+      toast.error(error.message || 'Failed to create checkout session');
     }
   };
 

@@ -13,6 +13,7 @@ import {
   ArrowRight,
   RefreshCw,
   UserPlus,
+  Ticket,
   AlertTriangle,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -189,6 +190,7 @@ export default function AdminDashboard() {
   const quickActions = [
     { label: 'Manage Users', href: '/admin/users', icon: Users, color: 'from-primary to-purple-500' },
     { label: 'Manage Plans', href: '/admin/plans', icon: DollarSign, color: 'from-emerald-500 to-green-400' },
+    { label: 'Manage Coupons', href: '/admin/coupons', icon: Ticket, color: 'from-pink-500 to-rose-400' },
     { label: 'Announcements', href: '/admin/notices', icon: Bell, color: 'from-amber-500 to-orange-400' },
     { label: 'Audit Logs', href: '/admin/audit', icon: FileText, color: 'from-blue-500 to-cyan-400' },
   ];

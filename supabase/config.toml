@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.get-calculator-settings]
 verify_jwt = false
+
+[functions.validate-coupon]
+verify_jwt = false
