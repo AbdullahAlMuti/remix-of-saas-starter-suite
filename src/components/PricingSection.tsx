@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Check, Zap, Rocket, Building2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +12,7 @@ const planIcons = {
   enterprise: Building2,
 };
 
-const PricingSection = () => {
+const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { createCheckout, planName: currentPlanName } = useSubscription();
@@ -38,7 +39,7 @@ const PricingSection = () => {
   };
 
   return (
-    <section className="py-24 relative">
+    <section ref={ref} className="py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background" />
       
       <div className="container relative z-10 px-4">
@@ -146,6 +147,8 @@ const PricingSection = () => {
       </div>
     </section>
   );
-};
+});
+
+PricingSection.displayName = "PricingSection";
 
 export default PricingSection;
