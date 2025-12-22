@@ -64,7 +64,14 @@ export default {
         amazon: "hsl(var(--amazon-orange))",
         ebay: "hsl(var(--ebay-blue))",
         success: "hsl(var(--success))",
-        // Warm trustworthy landing page palette
+        /* Named palette colors for direct use */
+        "heaven": "hsl(0, 0%, 100%)",
+        "cascading": "hsl(0, 9%, 97%)",
+        "steam": "hsl(270, 2%, 87%)",
+        "ice": "hsl(12, 6%, 74%)",
+        "indigo-light": "hsl(227, 56%, 61%)",
+        "sandpiper": "hsl(180, 1%, 45%)",
+        /* Warm/Landing page tokens */
         "warm-glow": "hsl(var(--warm-glow))",
         "warm-accent": "hsl(var(--warm-accent))",
         "warm-text": "hsl(var(--warm-text))",
@@ -80,6 +87,7 @@ export default {
         "warm-card": "hsl(var(--warm-card))",
         "warm-flow": "hsl(var(--warm-flow))",
         "warm-badge": "hsl(var(--warm-badge))",
+        /* Soft platform colors */
         "amazon-soft": "hsl(33, 60%, 95%)",
         "amazon-text": "hsl(33, 80%, 40%)",
         "ebay-soft": "hsl(211, 60%, 95%)",

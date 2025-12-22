@@ -9,17 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md hover:-translate-y-0.5",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-border bg-transparent hover:bg-secondary hover:text-secondary-foreground",
+        outline: "border border-border bg-background hover:bg-secondary hover:text-secondary-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-secondary hover:text-secondary-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 animate-gradient bg-[length:200%_200%]",
-        glass: "bg-secondary/40 backdrop-blur-sm text-foreground hover:bg-secondary/60 border border-border/50",
-        glow: "bg-primary text-primary-foreground shadow-[0_0_60px_hsl(252,100%,65%,0.4)] hover:shadow-[0_0_80px_hsl(252,100%,65%,0.6)] hover:-translate-y-0.5",
-        amazon: "bg-amazon text-primary-foreground hover:bg-amazon/90 shadow-lg shadow-amazon/25",
-        ebay: "bg-ebay text-foreground hover:bg-ebay/90 shadow-lg shadow-ebay/25",
+        hero: "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5",
+        glass: "bg-card/80 backdrop-blur-sm text-foreground hover:bg-card border border-border",
+        glow: "bg-primary text-primary-foreground shadow-[0_0_30px_hsl(227,56%,61%,0.3)] hover:shadow-[0_0_40px_hsl(227,56%,61%,0.4)] hover:-translate-y-0.5",
+        amazon: "bg-amazon text-primary-foreground hover:bg-amazon/90 shadow-sm",
+        ebay: "bg-ebay text-foreground hover:bg-ebay/90 shadow-sm",
       },
       size: {
         default: "h-11 px-6 py-2",
