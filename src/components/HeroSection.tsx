@@ -1,122 +1,190 @@
-import { motion } from "framer-motion";
-import { ArrowRight, Zap, Shield, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Chrome, Star, Package, ShoppingCart, TrendingUp, Zap, Shield, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
+
+const featureTabs = [
+  { id: 'listings', label: 'Smart Listings', icon: Package, description: 'AI-powered product listings that convert' },
+  { id: 'orders', label: 'Auto Orders', icon: ShoppingCart, description: 'Automated order fulfillment from Amazon' },
+  { id: 'analytics', label: 'Profit Tracker', icon: BarChart3, description: 'Real-time analytics and profit insights' },
+];
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('listings');
 
   const handleStartAutomating = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      // Scroll to pricing section
-      const pricingSection = document.getElementById('pricing');
-      if (pricingSection) {
-        pricingSection.scrollIntoView({ behavior: 'smooth' });
-      }
+      navigate('/register');
     }
   };
+
+  const handleGetExtension = () => {
+    // Chrome Web Store link (placeholder)
+    window.open('https://chrome.google.com/webstore', '_blank');
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden mesh-gradient noise-overlay">
-      {/* Animated background orbs */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-hero-warm">
+      {/* Subtle radial gradient background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/15 rounded-full blur-3xl animate-float" style={{ animationDelay: "-3s" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-radial from-warm-glow/30 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-warm-accent/30 to-transparent" />
+      </div>
+
+      {/* Decorative rays (like in reference) */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-5xl overflow-hidden pointer-events-none">
+        <svg className="w-full h-40 opacity-20" viewBox="0 0 800 160" fill="none">
+          {[...Array(12)].map((_, i) => (
+            <line 
+              key={i}
+              x1="400" 
+              y1="0" 
+              x2={100 + i * 55} 
+              y2="160" 
+              stroke="hsl(var(--warm-accent))" 
+              strokeWidth="1"
+              className="opacity-60"
+            />
+          ))}
+        </svg>
       </div>
 
       <div className="container relative z-10 px-4 py-20">
-        <div className="max-w-4xl mx-auto text-center stagger-children">
-          {/* Badge */}
-          <div className="animate-slide-up mb-8">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-sm font-medium text-foreground/80">
-              <Zap className="w-4 h-4 text-primary" />
-              Professional Dropshipping Automation
-            </span>
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Trust Badge */}
+          <div className="mb-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warm-badge border border-warm-accent/20">
+            <span className="text-warm-accent text-sm font-medium">#1 eBay Dropshipping Extension</span>
+            <div className="flex items-center gap-0.5 ml-2">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-3.5 h-3.5 fill-warm-star text-warm-star" />
+              ))}
+            </div>
+            <span className="text-warm-text-muted text-sm ml-1">4.9/5</span>
           </div>
 
           {/* Main headline */}
-          <h1 className="animate-slide-up font-display text-5xl md:text-7xl font-bold tracking-tight mb-6">
-            <span className="text-foreground">From Amazon to eBay</span>
+          <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 text-warm-text">
+            Scale Your eBay Store
             <br />
-            <span className="gradient-text">Fully Automated</span>
+            <span className="text-warm-accent">With One Click</span>
           </h1>
 
           {/* Subheadline */}
-          <p className="animate-slide-up text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            Snipinal is the all-in-one automation suite that handles product discovery, 
-            intelligent listing, and order fulfillment — so you can scale without limits.
+          <p className="text-lg md:text-xl text-warm-text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
+            Snipinal is the all-in-one Chrome extension that automates product sourcing, 
+            intelligent listings, and order fulfillment — so you can focus on growing.
           </p>
 
           {/* CTA Buttons */}
-          <div className="animate-slide-up flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Button variant="hero" size="xl" onClick={handleStartAutomating}>
-              Start Automating Now
-              <ArrowRight className="w-5 h-5" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <Button 
+              onClick={handleStartAutomating}
+              className="h-12 px-8 bg-warm-cta hover:bg-warm-cta-hover text-warm-cta-text font-semibold text-base rounded-xl shadow-warm-cta"
+            >
+              Start Now for Free
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button variant="glass" size="lg">
-              Watch Demo
+            <Button 
+              onClick={handleGetExtension}
+              variant="outline"
+              className="h-12 px-8 bg-background hover:bg-muted border-warm-border text-warm-text font-semibold text-base rounded-xl"
+            >
+              <Chrome className="w-5 h-5 mr-2 text-warm-chrome" />
+              Get Free Extension
             </Button>
           </div>
 
+          {/* Feature Tabs */}
+          <div className="max-w-xl mx-auto">
+            <div className="inline-flex items-center justify-center gap-2 p-1.5 rounded-2xl bg-warm-tab-bg border border-warm-border">
+              {featureTabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                      "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all",
+                      isActive 
+                        ? "bg-background text-warm-accent shadow-sm border-b-2 border-warm-accent" 
+                        : "text-warm-text-muted hover:text-warm-text"
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Tab content description */}
+            <p className="mt-4 text-sm text-warm-text-muted">
+              {featureTabs.find(t => t.id === activeTab)?.description}
+            </p>
+          </div>
+
           {/* Trust indicators */}
-          <div className="animate-slide-up flex flex-wrap justify-center items-center gap-8 text-muted-foreground">
+          <div className="mt-16 flex flex-wrap justify-center items-center gap-8 text-warm-text-muted">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-success" />
-              <span className="text-sm">Secure & Compliant</span>
+              <Shield className="w-5 h-5 text-warm-trust" />
+              <span className="text-sm">Secure & Private</span>
             </div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
+              <TrendingUp className="w-5 h-5 text-warm-trust" />
               <span className="text-sm">10x Faster Listings</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-accent" />
+              <Zap className="w-5 h-5 text-warm-trust" />
               <span className="text-sm">AI-Powered</span>
             </div>
           </div>
         </div>
 
-        {/* Hero illustration - Platform flow */}
-        <div className="mt-20 animate-slide-up relative max-w-3xl mx-auto">
-          <div className="glass-card p-8 rounded-3xl glow-effect">
+        {/* Platform Flow Visual */}
+        <div className="mt-16 relative max-w-2xl mx-auto">
+          <div className="bg-warm-card border border-warm-border rounded-2xl p-6 shadow-warm-card">
             <div className="flex items-center justify-center gap-4 md:gap-8">
               {/* Amazon */}
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl badge-amazon flex items-center justify-center text-2xl md:text-3xl font-bold">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-amazon-soft flex items-center justify-center text-xl md:text-2xl font-bold text-amazon-text">
                   A
                 </div>
-                <span className="text-sm font-medium text-muted-foreground">Amazon</span>
+                <span className="text-xs font-medium text-warm-text-muted">Amazon</span>
               </div>
 
               {/* Flow arrow */}
               <div className="flex items-center">
-                <div className="w-8 md:w-16 h-1 bg-gradient-to-r from-amazon to-primary rounded-full" />
-                <div className="w-3 h-3 border-t-2 border-r-2 border-primary rotate-45 -ml-1.5" />
+                <div className="w-8 md:w-12 h-0.5 bg-warm-flow rounded-full" />
+                <div className="w-2 h-2 border-t-2 border-r-2 border-warm-accent rotate-45 -ml-1" />
               </div>
 
               {/* Snipinal */}
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center animate-pulse-glow">
-                  <Zap className="w-10 h-10 md:w-12 md:h-12 text-primary-foreground" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-warm-accent flex items-center justify-center shadow-warm-brand">
+                  <Zap className="w-8 h-8 md:w-10 md:h-10 text-warm-cta-text" />
                 </div>
-                <span className="text-sm font-bold gradient-text">Snipinal</span>
+                <span className="text-xs font-bold text-warm-accent">Snipinal</span>
               </div>
 
               {/* Flow arrow */}
               <div className="flex items-center">
-                <div className="w-8 md:w-16 h-1 bg-gradient-to-r from-primary to-ebay rounded-full" />
-                <div className="w-3 h-3 border-t-2 border-r-2 border-ebay rotate-45 -ml-1.5" />
+                <div className="w-8 md:w-12 h-0.5 bg-warm-flow rounded-full" />
+                <div className="w-2 h-2 border-t-2 border-r-2 border-warm-accent rotate-45 -ml-1" />
               </div>
 
               {/* eBay */}
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl badge-ebay flex items-center justify-center text-2xl md:text-3xl font-bold">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-ebay-soft flex items-center justify-center text-xl md:text-2xl font-bold text-ebay-text">
                   e
                 </div>
-                <span className="text-sm font-medium text-muted-foreground">eBay</span>
+                <span className="text-xs font-medium text-warm-text-muted">eBay</span>
               </div>
             </div>
           </div>
