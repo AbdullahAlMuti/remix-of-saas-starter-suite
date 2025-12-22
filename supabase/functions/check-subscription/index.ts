@@ -17,6 +17,37 @@ const productToPlan: Record<string, { name: string; credits: number }> = {
   'prod_TeCiCCFNeORn9S': { name: 'starter', credits: 50 },
   'prod_TeCiyupNyVBR05': { name: 'growth', credits: 200 },
   'prod_TeCivsSU28U4G1': { name: 'enterprise', credits: 9999 },
+  // Free trial product - to be added after creating in Stripe
+};
+
+// Check for completed free trial payment
+const checkFreeTrialPayment = async (stripe: Stripe, customerId: string): Promise<{ hasTrial: boolean; trialEndDate: string | null }> => {
+  try {
+    // Check for successful payment intents (one-time payments)
+    const paymentIntents = await stripe.paymentIntents.list({
+      customer: customerId,
+      limit: 10,
+    });
+
+    const successfulPayment = paymentIntents.data.find((pi: any) => 
+      pi.status === 'succeeded' && pi.amount === 100 // $1.00 in cents
+    );
+
+    if (successfulPayment) {
+      // Calculate trial end date (14 days from payment)
+      const paymentDate = new Date(successfulPayment.created * 1000);
+      const trialEndDate = new Date(paymentDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+      
+      if (trialEndDate > new Date()) {
+        return { hasTrial: true, trialEndDate: trialEndDate.toISOString() };
+      }
+    }
+
+    return { hasTrial: false, trialEndDate: null };
+  } catch (error) {
+    console.log("Error checking free trial payment:", error);
+    return { hasTrial: false, trialEndDate: null };
+  }
 };
 
 serve(async (req) => {

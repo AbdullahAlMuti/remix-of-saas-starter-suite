@@ -11,6 +11,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Register from "./pages/Register";
+import SelectPlan from "./pages/SelectPlan";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import PaymentRequired from "./pages/PaymentRequired";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/course" element={<Course />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/select-plan" element={<SelectPlan />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/payment-required" element={<PaymentRequired />} />
               <Route path="/admin/login" element={<AdminLogin />} />

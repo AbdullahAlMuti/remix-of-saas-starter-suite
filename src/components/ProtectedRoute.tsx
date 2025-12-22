@@ -20,10 +20,6 @@ export function ProtectedRoute({
   const { subscribed, isLoading: subscriptionLoading, planName } = useSubscription();
   const location = useLocation();
 
-  // Check if there's a pending plan selection (user came from pricing flow)
-  const hasPendingPlan = !!localStorage.getItem('selectedPlan');
-  const isPaidPlanPending = hasPendingPlan && localStorage.getItem('selectedPlan') !== 'free';
-
   if (isLoading || subscriptionLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -39,9 +35,9 @@ export function ProtectedRoute({
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // If user has a pending paid plan and hasn't subscribed yet, redirect to payment
-  if (isPaidPlanPending && !subscribed && planName === 'free') {
-    return <Navigate to="/payment-required" replace />;
+  // Require plan selection - users without active subscription must select a plan first
+  if (!subscribed) {
+    return <Navigate to="/select-plan" replace />;
   }
 
   if (requireSuperAdmin && !isSuperAdmin) {
