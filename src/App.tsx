@@ -21,6 +21,7 @@ import ExtensionConnect from "./pages/dashboard/ExtensionConnect";
 import Subscription from "./pages/dashboard/Subscription";
 import DashboardSettings from "./pages/dashboard/Settings";
 import DashboardPrompts from "./pages/dashboard/Prompts";
+import CalculatorSettings from "./pages/dashboard/CalculatorSettings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="credits" element={<Dashboard />} />
                 <Route path="subscription" element={<Subscription />} />
                 <Route path="extension" element={<ExtensionConnect />} />
+                <Route path="calculator" element={<CalculatorSettings />} />
                 <Route path="settings" element={<DashboardSettings />} />
               </Route>
 
