@@ -51,7 +51,7 @@ async function handleAuthExchange(code, container) {
             window.history.replaceState({}, document.title, window.location.pathname);
 
             checkSaaSStatus(container);
-            alert('Successfully connected to Snipinal SaaS!');
+            alert('Successfully connected to SellerSuit SaaS!');
         } else {
             throw new Error(data.error || 'Auth failed');
         }

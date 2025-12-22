@@ -241,7 +241,7 @@ const HeroSection = () => {
                           </text>
                         </svg>
                       ) : index === 1 ? (
-                        // Snipinal Logo
+                        // SellerSuit Logo
                         <Zap className={cn(
                           "w-8 h-8 md:w-10 md:h-10",
                           activeStep === index ? "text-primary-foreground" : "text-primary"

@@ -7,7 +7,7 @@ const testimonials = [
     name: "Michael Chen",
     role: "Full-Time Dropshipper",
     avatar: "MC",
-    content: "Snipinal cut my listing time by 90%. What used to take me hours now happens in minutes. The auto-order feature is a game changer.",
+    content: "SellerSuit cut my listing time by 90%. What used to take me hours now happens in minutes. The auto-order feature is a game changer.",
     rating: 5,
   },
   {
@@ -21,7 +21,7 @@ const testimonials = [
     name: "David Rodriguez",
     role: "E-commerce Agency Owner",
     avatar: "DR",
-    content: "We manage 50+ client stores. Snipinal's dashboard gives us the visibility we need, and the AI titles consistently outperform manual ones.",
+    content: "We manage 50+ client stores. SellerSuit's dashboard gives us the visibility we need, and the AI titles consistently outperform manual ones.",
     rating: 5,
   },
 ];

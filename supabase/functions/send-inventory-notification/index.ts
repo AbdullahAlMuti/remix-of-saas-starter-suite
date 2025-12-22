@@ -118,7 +118,7 @@ function getEmailHtml(data: NotificationRequest): string {
               <tr>
                 <td style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
                   <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-                    Sent by Snipinal Inventory Tracker
+                    Sent by SellerSuit Inventory Tracker
                   </p>
                 </td>
               </tr>
@@ -214,7 +214,7 @@ serve(async (req) => {
 
     // Send email
     const emailResponse = await resend.emails.send({
-      from: "Snipinal <notifications@resend.dev>",
+      from: "SellerSuit <notifications@resend.dev>",
       to: [recipientEmail],
       subject: subject,
       html: html,

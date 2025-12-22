@@ -129,7 +129,7 @@ export default function Auth() {
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">S</span>
             </div>
-            <span className="text-2xl font-display font-bold text-foreground">Snipinal</span>
+            <span className="text-2xl font-display font-bold text-foreground">SellerSuit</span>
           </a>
         </div>
 

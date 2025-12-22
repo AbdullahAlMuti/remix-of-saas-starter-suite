@@ -67,7 +67,7 @@ const CTASection = forwardRef<HTMLElement>((_, ref) => {
             
             <p className="text-xl text-muted-foreground max-w-xl mx-auto mb-10">
               Join thousands of sellers who have eliminated manual work and scaled 
-              their businesses with Snipinal.
+              their businesses with SellerSuit.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

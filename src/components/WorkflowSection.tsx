@@ -8,7 +8,7 @@ const steps = [
     step: "01",
     icon: Search,
     title: "Discover & Extract",
-    description: "Browse Amazon and let Snipinal's injector automatically scrape product data, images, and specifications.",
+    description: "Browse Amazon and let SellerSuit's injector automatically scrape product data, images, and specifications.",
     color: "bg-warning/20 text-warning border-warning/30",
     accentColor: "from-warning/20 to-warning/5",
   },
