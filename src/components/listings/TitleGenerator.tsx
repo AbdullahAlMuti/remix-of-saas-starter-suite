@@ -218,12 +218,12 @@ export default function TitleGenerator({ productInfo, onSelectTitle }: TitleGene
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Select Prompt Template</Label>
-            <Select value={selectedPromptId} onValueChange={setSelectedPromptId}>
+            <Select value={selectedPromptId || "custom"} onValueChange={(val) => setSelectedPromptId(val === "custom" ? "" : val)}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a prompt..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Use custom prompt</SelectItem>
+                <SelectItem value="custom">Use custom prompt</SelectItem>
                 {prompts.map((prompt) => (
                   <SelectItem key={prompt.id} value={prompt.id}>
                     {prompt.name}
