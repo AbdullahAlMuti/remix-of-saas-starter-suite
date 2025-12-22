@@ -20,6 +20,7 @@ import Listings from "./pages/dashboard/Listings";
 import ExtensionConnect from "./pages/dashboard/ExtensionConnect";
 import Subscription from "./pages/dashboard/Subscription";
 import DashboardSettings from "./pages/dashboard/Settings";
+import DashboardPrompts from "./pages/dashboard/Prompts";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -28,6 +29,7 @@ import AdminAudit from "./pages/admin/AdminAudit";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminRoles from "./pages/admin/AdminRoles";
+import AdminPrompts from "./pages/admin/AdminPrompts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,7 +60,7 @@ const App = () => (
                 <Route path="listings" element={<Listings />} />
                 <Route path="orders" element={<Orders />} />
                 <Route path="alerts" element={<Dashboard />} />
-                <Route path="prompts" element={<Dashboard />} />
+                <Route path="prompts" element={<DashboardPrompts />} />
                 <Route path="credits" element={<Dashboard />} />
                 <Route path="subscription" element={<Subscription />} />
                 <Route path="extension" element={<ExtensionConnect />} />
@@ -77,6 +79,7 @@ const App = () => (
                 <Route path="payments" element={<AdminPayments />} />
                 <Route path="roles" element={<AdminRoles />} />
                 <Route path="notices" element={<AdminNotices />} />
+                <Route path="prompts" element={<AdminPrompts />} />
                 <Route path="audit" element={<AdminAudit />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>

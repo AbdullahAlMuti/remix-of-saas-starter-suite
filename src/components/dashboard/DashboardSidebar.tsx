@@ -53,6 +53,7 @@ const adminNavItems: NavItem[] = [
   { icon: DollarSign, label: 'Payments', href: '/admin/payments', adminOnly: true },
   { icon: ShieldCheck, label: 'Roles', href: '/admin/roles', adminOnly: true },
   { icon: Megaphone, label: 'Notices', href: '/admin/notices', adminOnly: true },
+  { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts', adminOnly: true },
   { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit', adminOnly: true },
   { icon: Shield, label: 'Settings', href: '/admin/settings', adminOnly: true },
 ];
