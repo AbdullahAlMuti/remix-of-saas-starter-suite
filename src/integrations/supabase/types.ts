@@ -196,6 +196,42 @@ export type Database = {
           },
         ]
       }
+      calculator_settings: {
+        Row: {
+          created_at: string
+          desired_profit_percent: number
+          ebay_fee_percent: number
+          id: string
+          promotional_fee_percent: number
+          tax_percent: number
+          tracking_fee: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          desired_profit_percent?: number
+          ebay_fee_percent?: number
+          id?: string
+          promotional_fee_percent?: number
+          tax_percent?: number
+          tracking_fee?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          desired_profit_percent?: number
+          ebay_fee_percent?: number
+          id?: string
+          promotional_fee_percent?: number
+          tax_percent?: number
+          tracking_fee?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       extension_sessions: {
         Row: {
           browser: string | null

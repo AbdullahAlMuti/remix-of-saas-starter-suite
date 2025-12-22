@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Crown,
   Puzzle,
+  Calculator,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ const mainNavItems: NavItem[] = [
   { icon: ShoppingCart, label: 'Auto Orders', href: '/dashboard/orders' },
   { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
   { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
+  { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
   { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
   { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
   { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },
