@@ -87,23 +87,20 @@ export function useSubscription() {
     }
   }, [session?.access_token]);
 
-  const createCheckout = async (planName: keyof typeof PLANS, couponCode?: string) => {
+  const createCheckout = async (priceId: string, isYearly: boolean = false, couponCode?: string): Promise<{ url?: string; error?: string }> => {
     if (!session?.access_token) {
       toast.error('Please log in to subscribe');
-      return;
+      return { error: 'Please log in to subscribe' };
     }
 
-    const plan = PLANS[planName];
-    if (!plan.stripePriceId) {
-      toast.error('This plan does not support checkout');
-      return;
+    if (!priceId) {
+      return { error: 'Invalid plan configuration' };
     }
 
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          priceId: plan.stripePriceId,
-          planId: planName,
+          priceId,
           couponCode: couponCode || undefined,
         },
         headers: {
@@ -115,15 +112,18 @@ export function useSubscription() {
 
       if (data?.error) {
         toast.error(data.error);
-        return;
+        return { error: data.error };
       }
 
       if (data?.url) {
-        window.open(data.url, '_blank');
+        return { url: data.url };
       }
+
+      return { error: 'No checkout URL returned' };
     } catch (error: any) {
       console.error('Error creating checkout:', error);
       toast.error(error.message || 'Failed to create checkout session');
+      return { error: error.message || 'Failed to create checkout session' };
     }
   };
 

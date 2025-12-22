@@ -69,7 +69,13 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   };
 
   const handleCheckout = async (couponCode?: string) => {
-    await createCheckout(selectedPlanKey, couponCode);
+    const selectedPlan = PLANS[selectedPlanKey];
+    if (selectedPlan.stripePriceId) {
+      const { url } = await createCheckout(selectedPlan.stripePriceId, false, couponCode);
+      if (url) {
+        window.location.href = url;
+      }
+    }
   };
 
   return (

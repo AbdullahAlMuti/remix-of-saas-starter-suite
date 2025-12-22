@@ -33,9 +33,10 @@ export default function Auth() {
 
   useEffect(() => {
     if (user) {
-      navigate(from, { replace: true });
+      // Always redirect to plan selection for new users or those without active subscription
+      navigate('/select-plan', { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [user, navigate]);
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -76,7 +77,7 @@ export default function Auth() {
       } else if (mode === 'login') {
         const { error } = await signIn(email, password);
         if (!error) {
-          navigate(from, { replace: true });
+          // Will be redirected by useEffect when user state updates
         }
       } else {
         const { error } = await signUp(email, password, fullName);
