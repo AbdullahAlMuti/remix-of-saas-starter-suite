@@ -1,14 +1,15 @@
 import { forwardRef, useRef, useState } from "react";
-import { Check, Zap, Rocket, Building2, Crown } from "lucide-react";
+import { Check, Zap, Rocket, Building2, Crown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription, PLANS } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
+import { usePlans, Plan } from "@/hooks/usePlans";
 import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { CheckoutDialog } from "./checkout/CheckoutDialog";
 
-const planIcons = {
+const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   free: Crown,
   starter: Zap,
   growth: Rocket,
@@ -41,18 +42,17 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { createCheckout, planName: currentPlanName } = useSubscription();
+  const { plans, isLoading: plansLoading } = usePlans();
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
   
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
-  const [selectedPlanKey, setSelectedPlanKey] = useState<keyof typeof PLANS>('starter');
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
-  const handlePlanSelect = async (planKey: string) => {
-    const plan = PLANS[planKey as keyof typeof PLANS];
-    
+  const handlePlanSelect = async (plan: Plan) => {
     if (!user) {
-      if (plan.stripePriceId) {
-        navigate('/register', { state: { selectedPlan: planKey } });
+      if (plan.stripe_price_id_monthly) {
+        navigate('/select-plan');
       } else {
         navigate('/auth');
       }
@@ -60,8 +60,8 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
     }
 
     // For paid plans, open the checkout dialog
-    if (plan.stripePriceId) {
-      setSelectedPlanKey(planKey as keyof typeof PLANS);
+    if (plan.stripe_price_id_monthly) {
+      setSelectedPlan(plan);
       setCheckoutDialogOpen(true);
     } else {
       navigate('/dashboard/subscription');
@@ -69,14 +69,23 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   };
 
   const handleCheckout = async (couponCode?: string) => {
-    const selectedPlan = PLANS[selectedPlanKey];
-    if (selectedPlan.stripePriceId) {
-      const { url } = await createCheckout(selectedPlan.stripePriceId, false, couponCode);
+    if (selectedPlan?.stripe_price_id_monthly) {
+      const { url } = await createCheckout(selectedPlan.stripe_price_id_monthly, false, couponCode);
       if (url) {
         window.location.href = url;
       }
     }
   };
+
+  if (plansLoading) {
+    return (
+      <section ref={ref} className="py-24 relative overflow-hidden">
+        <div className="container flex items-center justify-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={ref} className="py-24 relative overflow-hidden">
@@ -112,20 +121,25 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
         {/* Pricing cards */}
         <motion.div 
           ref={containerRef}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+          className={cn(
+            "grid gap-6 max-w-6xl mx-auto",
+            plans.length <= 2 ? "md:grid-cols-2 max-w-3xl" :
+            plans.length === 3 ? "md:grid-cols-3 max-w-4xl" :
+            "md:grid-cols-2 lg:grid-cols-4"
+          )}
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
         >
-          {Object.entries(PLANS).map(([key, plan]) => {
-            const Icon = planIcons[key as keyof typeof planIcons];
-            const isCurrentPlan = currentPlanName === key && !!user;
-            const isFeatured = key === 'growth';
-            const isPaid = plan.priceMonthly > 0;
+          {plans.map((plan) => {
+            const Icon = planIcons[plan.name] || Zap;
+            const isCurrentPlan = currentPlanName === plan.name && !!user;
+            const isFeatured = plan.name === 'growth' || (plans.length <= 2 && plan.price_monthly > 0);
+            const isPaid = plan.price_monthly > 0;
 
             return (
               <motion.div
-                key={key}
+                key={plan.id}
                 className={cn(
                   "relative rounded-3xl p-8 transition-all duration-300 bg-card border",
                   isFeatured 
@@ -137,7 +151,7 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
               >
                 {/* Featured badge */}
-                {isFeatured && (
+                {isFeatured && !isCurrentPlan && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                     <span className="px-4 py-1 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold">
                       Most Popular
@@ -166,9 +180,9 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
                   >
                     <Icon className="h-6 w-6 text-primary" />
                   </motion.div>
-                  <h3 className="font-display text-xl font-semibold mb-2 text-foreground">{plan.displayName}</h3>
+                  <h3 className="font-display text-xl font-semibold mb-2 text-foreground">{plan.display_name}</h3>
                   <div className="flex items-baseline justify-center gap-1 mb-2">
-                    <span className="font-display text-4xl font-bold text-foreground">${plan.priceMonthly}</span>
+                    <span className="font-display text-4xl font-bold text-foreground">${plan.price_monthly}</span>
                     {isPaid && <span className="text-muted-foreground">/month</span>}
                   </div>
                 </div>
@@ -206,7 +220,7 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
                       isFeatured && "bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
                     )}
                     disabled={isCurrentPlan}
-                    onClick={() => handlePlanSelect(key)}
+                    onClick={() => handlePlanSelect(plan)}
                   >
                     {isCurrentPlan 
                       ? 'Current Plan' 
@@ -238,7 +252,7 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
       <CheckoutDialog
         open={checkoutDialogOpen}
         onOpenChange={setCheckoutDialogOpen}
-        planKey={selectedPlanKey}
+        plan={selectedPlan}
         onCheckout={handleCheckout}
       />
     </section>

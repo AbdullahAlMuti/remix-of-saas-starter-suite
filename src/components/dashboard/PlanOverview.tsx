@@ -9,14 +9,16 @@ import {
   CreditCard,
   Settings,
   RefreshCw,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useSubscription } from '@/hooks/useSubscription';
+import { usePlans } from '@/hooks/usePlans';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
-const planIcons = {
+const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   free: Crown,
   starter: Zap,
   growth: Rocket,
@@ -39,9 +41,10 @@ export function PlanOverview({ creditsRemaining, creditsMax }: PlanOverviewProps
     openCustomerPortal,
     checkSubscription 
   } = useSubscription();
+  const { plans, isLoading: plansLoading, getPlanByName } = usePlans();
 
-  const currentPlan = PLANS[planName as keyof typeof PLANS] || PLANS.free;
-  const PlanIcon = planIcons[planName as keyof typeof planIcons] || Crown;
+  const currentPlan = getPlanByName(planName);
+  const PlanIcon = planIcons[planName] || Crown;
   
   const creditsUsed = creditsMax - creditsRemaining;
   const creditsPercent = Math.min((creditsRemaining / creditsMax) * 100, 100);
@@ -49,15 +52,31 @@ export function PlanOverview({ creditsRemaining, creditsMax }: PlanOverviewProps
 
   // Get next tier info for upgrade prompt
   const getNextTier = () => {
-    switch (planName) {
-      case 'free': return { name: 'Starter', credits: 50, price: 19.99 };
-      case 'starter': return { name: 'Growth', credits: 200, price: 49.99 };
-      case 'growth': return { name: 'Enterprise', credits: 'Unlimited', price: 149.99 };
-      default: return null;
+    if (!currentPlan || plans.length === 0) return null;
+    
+    const sortedPlans = [...plans].sort((a, b) => a.price_monthly - b.price_monthly);
+    const currentIndex = sortedPlans.findIndex(p => p.name === planName);
+    const nextPlan = sortedPlans[currentIndex + 1];
+    
+    if (nextPlan) {
+      return {
+        name: nextPlan.display_name,
+        credits: nextPlan.credits_per_month > 9000 ? 'Unlimited' : nextPlan.credits_per_month,
+        price: nextPlan.price_monthly
+      };
     }
+    return null;
   };
 
   const nextTier = getNextTier();
+
+  if (plansLoading || !currentPlan) {
+    return (
+      <div className="bg-card border border-border rounded-xl p-8 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
@@ -76,7 +95,7 @@ export function PlanOverview({ creditsRemaining, creditsMax }: PlanOverviewProps
             </div>
             <div>
               <h3 className="text-base font-medium text-foreground flex items-center gap-2">
-                {currentPlan.displayName} Plan
+                {currentPlan.display_name} Plan
                 {subscribed && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     Active
