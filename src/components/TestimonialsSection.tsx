@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Star } from "lucide-react";
 
 const testimonials = [
@@ -22,9 +23,9 @@ const testimonials = [
   },
 ];
 
-const TestimonialsSection = () => {
+const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section ref={ref} className="py-24 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 mesh-gradient opacity-30" />
       
@@ -76,6 +77,8 @@ const TestimonialsSection = () => {
       </div>
     </section>
   );
-};
+});
+
+TestimonialsSection.displayName = "TestimonialsSection";
 
 export default TestimonialsSection;
