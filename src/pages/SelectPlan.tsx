@@ -143,9 +143,11 @@ export default function SelectPlan() {
       return;
     }
 
-    // User is logged in - proceed directly to checkout
-    if (!plan.stripe_price_id_monthly) {
-      toast.error('This plan is not available for checkout');
+    // User is logged in - handle free plan vs paid plan
+    if (!plan.stripe_price_id_monthly || plan.price_monthly === 0) {
+      // Free plan - just redirect to dashboard
+      toast.success(`You're on the ${plan.display_name} plan!`);
+      navigate('/dashboard', { replace: true });
       return;
     }
 
