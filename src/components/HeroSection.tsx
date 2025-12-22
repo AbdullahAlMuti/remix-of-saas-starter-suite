@@ -172,39 +172,36 @@ const HeroSection = () => {
             </Button>
           </motion.div>
 
-          {/* Animated Workflow Demo */}
+          {/* Animated Workflow Demo - No Card */}
           <motion.div 
-            className="relative max-w-3xl mx-auto mb-16"
+            className="relative max-w-3xl mx-auto mb-16 py-8"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <div className="bg-card border border-border rounded-3xl p-8 shadow-xl">
-              {/* Workflow Steps */}
-              <div className="flex items-center justify-between gap-4">
-                {workflowSteps.map((step, index) => (
-                  <div key={index} className="flex-1 flex flex-col items-center">
+            {/* Workflow Steps */}
+            <div className="relative flex items-start justify-center gap-0">
+              {workflowSteps.map((step, index) => (
+                <div key={index} className="flex items-center">
+                  {/* Step Box */}
+                  <div className="flex flex-col items-center">
                     <motion.div 
                       className={cn(
                         "relative w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center transition-all duration-500",
                         activeStep === index 
-                          ? "bg-primary shadow-lg shadow-primary/30 scale-110" 
+                          ? "bg-primary shadow-lg shadow-primary/30" 
                           : activeStep > index 
-                            ? "bg-success/20 border-2 border-success"
-                            : "bg-secondary border-2 border-border"
+                            ? "bg-success/10 border-2 border-success"
+                            : "bg-background border-2 border-border"
                       )}
-                      animate={activeStep === index ? { scale: [1, 1.05, 1] } : {}}
-                      transition={{ duration: 0.5, repeat: activeStep === index ? Infinity : 0, repeatDelay: 1 }}
+                      animate={activeStep === index ? { scale: [1, 1.02, 1] } : {}}
+                      transition={{ duration: 0.8, repeat: activeStep === index ? Infinity : 0, repeatDelay: 0.5 }}
                     >
                       {activeStep > index ? (
-                        <Check className="w-8 h-8 md:w-10 md:h-10 text-success" />
+                        <Check className="w-8 h-8 md:w-10 md:h-10 text-success" strokeWidth={2.5} />
                       ) : index === 0 ? (
                         // Amazon Logo
                         <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
-                          <path 
-                            d="M32 8c-2.2 0-4.2.3-6 .9V22c1.8-.6 3.8-.9 6-.9s4.2.3 6 .9V8.9C36.2 8.3 34.2 8 32 8z" 
-                            className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
-                          />
                           <path 
                             d="M52 42c-4 3-10 5-18 5s-14-2-18-5c-.5-.4-.3-1 .3-.7 4 2.5 10 4 17.7 4 6 0 12.5-1.2 17.3-3.8.8-.4 1.2.5.7 1.5z" 
                             className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
@@ -213,22 +210,20 @@ const HeroSection = () => {
                             d="M54 40c-.5-.6-3-.3-4.2-.1-.3 0-.4-.3-.1-.5 2-1.4 5.3-1 5.7-.5.4.5-.1 4-2 5.6-.3.2-.6.1-.4-.2.4-1.1 1.5-3.7 1-4.3z" 
                             className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
                           />
-                          <text x="32" y="34" textAnchor="middle" dominantBaseline="middle" className={cn("font-bold", activeStep === index ? "fill-primary-foreground" : "fill-foreground")} style={{ fontSize: '18px' }}>
+                          <text x="32" y="30" textAnchor="middle" dominantBaseline="middle" className={cn("font-bold", activeStep === index ? "fill-primary-foreground" : "fill-foreground")} style={{ fontSize: '14px' }}>
                             amazon
                           </text>
                         </svg>
                       ) : index === 1 ? (
                         // Snipinal Logo
-                        <div className="flex flex-col items-center">
-                          <Zap className={cn(
-                            "w-8 h-8 md:w-10 md:h-10",
-                            activeStep === index ? "text-primary-foreground" : "text-primary"
-                          )} />
-                        </div>
+                        <Zap className={cn(
+                          "w-8 h-8 md:w-10 md:h-10",
+                          activeStep === index ? "text-primary-foreground" : "text-primary"
+                        )} />
                       ) : (
                         // eBay Logo
                         <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
-                          <text x="32" y="36" textAnchor="middle" dominantBaseline="middle" className="font-bold" style={{ fontSize: '20px' }}>
+                          <text x="32" y="34" textAnchor="middle" dominantBaseline="middle" className="font-bold" style={{ fontSize: '18px' }}>
                             <tspan fill={activeStep === index ? "#fff" : "#E53238"}>e</tspan>
                             <tspan fill={activeStep === index ? "#fff" : "#0064D2"}>B</tspan>
                             <tspan fill={activeStep === index ? "#fff" : "#F5AF02"}>a</tspan>
@@ -237,19 +232,17 @@ const HeroSection = () => {
                         </svg>
                       )}
                       
-                      {/* Pulse ring when active */}
-                      {activeStep === index && (
-                        <motion.div 
-                          className="absolute inset-0 rounded-2xl border-2 border-primary"
-                          animate={{ scale: [1, 1.3], opacity: [0.8, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        />
+                      {/* Small arrow indicator on completed steps */}
+                      {activeStep > index && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-success flex items-center justify-center">
+                          <ArrowRight className="w-3 h-3 text-white" />
+                        </div>
                       )}
                     </motion.div>
                     
                     <motion.div 
                       className="mt-3 text-center"
-                      animate={{ opacity: activeStep >= index ? 1 : 0.5 }}
+                      animate={{ opacity: activeStep >= index ? 1 : 0.6 }}
                     >
                       <p className={cn(
                         "font-semibold text-sm md:text-base",
@@ -258,62 +251,58 @@ const HeroSection = () => {
                       <p className="text-xs text-muted-foreground">{step.sublabel}</p>
                     </motion.div>
                   </div>
-                ))}
 
-                {/* Connecting arrows */}
-                <div className="absolute top-10 md:top-12 left-[calc(16.67%+40px)] right-[calc(16.67%+40px)] flex items-center justify-between pointer-events-none">
-                  {[0, 1].map((i) => (
-                    <motion.div 
-                      key={i}
-                      className="flex items-center flex-1"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: activeStep > i ? 1 : 0.3 }}
-                    >
+                  {/* Connecting Line with Arrow */}
+                  {index < workflowSteps.length - 1 && (
+                    <div className="flex items-center mx-4 md:mx-8 -mt-10">
                       <motion.div 
                         className={cn(
-                          "flex-1 h-0.5 rounded-full",
-                          activeStep > i ? "bg-success" : "bg-border"
+                          "w-16 md:w-24 h-0.5 rounded-full transition-colors duration-500",
+                          activeStep > index ? "bg-success" : "bg-border"
                         )}
                         initial={{ scaleX: 0 }}
-                        animate={{ scaleX: activeStep > i ? 1 : 0.3 }}
-                        transition={{ duration: 0.5, delay: activeStep > i ? 0.2 : 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.6, delay: 0.5 + index * 0.2 }}
                         style={{ transformOrigin: "left" }}
                       />
                       <motion.div 
                         className={cn(
-                          "w-2 h-2 border-t-2 border-r-2 rotate-45 -ml-1",
-                          activeStep > i ? "border-success" : "border-border"
+                          "w-0 h-0 border-t-[6px] border-b-[6px] border-l-[8px] border-t-transparent border-b-transparent transition-colors duration-500",
+                          activeStep > index ? "border-l-success" : "border-l-border"
                         )}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.8 + index * 0.2 }}
                       />
-                    </motion.div>
-                  ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              ))}
+            </div>
 
-              {/* Status message */}
-              <div className="mt-8 text-center">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeStep}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary"
-                  >
-                    <motion.div 
-                      className="w-2 h-2 rounded-full bg-success"
-                      animate={{ scale: [1, 1.3, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {activeStep === 0 && "Extracting product data from Amazon..."}
-                      {activeStep === 1 && "AI optimizing title & calculating price..."}
-                      {activeStep === 2 && "Publishing listing to eBay!"}
-                    </span>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+            {/* Status message */}
+            <div className="mt-10 text-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card border border-border shadow-sm"
+                >
+                  <motion.div 
+                    className="w-2 h-2 rounded-full bg-success"
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {activeStep === 0 && "Extracting product data from Amazon..."}
+                    {activeStep === 1 && "AI optimizing title & calculating price..."}
+                    {activeStep === 2 && "Publishing listing to eBay!"}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </motion.div>
 
