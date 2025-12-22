@@ -116,21 +116,77 @@ const CourseSection = () => {
         
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/20 rounded-full blur-3xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
+          
+          {/* Floating sparkle particles */}
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={`sparkle-${i}`}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [-10, -30, -10],
+                x: [0, Math.random() > 0.5 ? 10 : -10, 0],
+                opacity: [0, 1, 0],
+                scale: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2 + Math.random() * 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 3
+              }}
+            >
+              <div className={`w-1.5 h-1.5 rounded-full ${
+                i % 3 === 0 ? 'bg-primary/40' : i % 3 === 1 ? 'bg-success/40' : 'bg-accent/40'
+              }`} />
+            </motion.div>
+          ))}
+          
+          {/* Glowing orbs */}
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={`orb-${i}`}
+              className="absolute rounded-full blur-xl"
+              style={{
+                width: 60 + i * 20,
+                height: 60 + i * 20,
+                left: `${10 + i * 20}%`,
+                top: `${15 + (i % 3) * 30}%`,
+                background: i % 2 === 0 
+                  ? 'radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)'
+                  : 'radial-gradient(circle, hsl(var(--success) / 0.15) 0%, transparent 70%)',
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 4 + i,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.5
+              }}
+            />
+          ))}
           
           {/* Floating dollar signs */}
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute text-primary/20 text-4xl font-bold"
+              className="absolute text-primary/15 text-3xl font-bold"
               style={{
                 left: `${15 + i * 15}%`,
                 top: `${20 + (i % 3) * 25}%`,
               }}
               animate={{
                 y: [-20, 20, -20],
-                opacity: [0.1, 0.3, 0.1],
+                rotate: [-5, 5, -5],
+                opacity: [0.1, 0.25, 0.1],
               }}
               transition={{
                 duration: 3 + i * 0.5,
@@ -153,17 +209,47 @@ const CourseSection = () => {
                 bottom: `${10 + i * 8}%`,
               }}
               animate={{
-                y: [0, -30],
-                opacity: [0, 0.4, 0],
+                y: [0, -40],
+                opacity: [0, 0.5, 0],
               }}
               transition={{
-                duration: 2,
+                duration: 2.5,
                 repeat: Infinity,
                 ease: "easeOut",
                 delay: i * 0.5
               }}
             >
-              <TrendingUp className="w-8 h-8 text-success/40" />
+              <TrendingUp className="w-6 h-6 text-success/30" />
+            </motion.div>
+          ))}
+          
+          {/* Star sparkles */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`star-${i}`}
+              className="absolute"
+              style={{
+                left: `${5 + i * 12}%`,
+                top: `${10 + (i % 4) * 20}%`,
+              }}
+              animate={{
+                scale: [0, 1, 0],
+                rotate: [0, 180],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.4
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" className="text-warning/50">
+                <path 
+                  fill="currentColor" 
+                  d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"
+                />
+              </svg>
             </motion.div>
           ))}
         </div>
