@@ -18,6 +18,35 @@ const workflowSteps = [
   { label: "List & Sell", sublabel: "eBay" },
 ];
 
+// Amazon Logo SVG
+const AmazonLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 48 48" className={className} fill="none">
+    <path d="M29.2 35.3c-5.8 4.3-14.2 6.6-21.5 6.6-10.2 0-19.3-3.8-26.3-10.1-.5-.5-.1-1.2.6-.8 7.5 4.4 16.8 7 26.4 7 6.5 0 13.6-1.3 20.1-4.1 1-.4 1.8.7.7 1.4z" transform="translate(8, 5)" fill="#FF9900"/>
+    <path d="M31.5 32.7c-.7-.9-4.9-.4-6.8-.2-.6.1-.7-.4-.1-.8 3.3-2.3 8.7-1.7 9.4-.9.6.8-.2 6.3-3.3 8.9-.5.4-1 .2-.8-.3.7-1.8 2.3-5.8 1.6-6.7z" transform="translate(8, 5)" fill="#FF9900"/>
+    <path d="M24.8 5.6V3.3c0-.4.3-.6.6-.6h10.8c.4 0 .6.2.6.6v2c0 .3-.3.7-.8 1.4l-5.6 8c2.1 0 4.3.3 6.2 1.4.4.2.5.6.5 1v2.5c0 .4-.4.8-.8.6-3.5-1.8-8.1-2-12-.1-.4.2-.8-.2-.8-.6v-2.3c0-.4 0-1.1.4-1.8l6.5-9.3h-5.6c-.4 0-.6-.2-.6-.6z" transform="translate(8, 5)" fill="currentColor"/>
+    <path d="M8.6 21.5h-3.3c-.3 0-.5-.2-.6-.5V3.4c0-.3.3-.6.6-.6h3.1c.3 0 .5.2.6.5v2.3h.1c.8-2.1 2.3-3.1 4.3-3.1 2.1 0 3.4 1 4.3 3.1.8-2.1 2.6-3.1 4.6-3.1 1.4 0 2.9.6 3.8 1.9 1 1.5.8 3.6.8 5.5v11.1c0 .3-.3.6-.6.6h-3.3c-.3 0-.6-.3-.6-.6V10.5c0-.7.1-2.5-.1-3.2-.3-1.2-1-1.5-2-1.5-.8 0-1.7.5-2 1.4-.3.9-.3 2.4-.3 3.3v10.4c0 .3-.3.6-.6.6h-3.3c-.3 0-.6-.3-.6-.6V10.5c0-1.9.3-4.7-2.1-4.7s-2.4 2.7-2.4 4.7v10.4c0 .3-.3.6-.6.6z" transform="translate(8, 5)" fill="currentColor"/>
+  </svg>
+);
+
+// eBay Logo SVG
+const EbayLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 48 48" className={className}>
+    <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" className="font-bold" style={{ fontSize: '22px' }}>
+      <tspan fill="#E53238">e</tspan>
+      <tspan fill="#0064D2">b</tspan>
+      <tspan fill="#F5AF02">a</tspan>
+      <tspan fill="#86B817">y</tspan>
+    </text>
+  </svg>
+);
+
+// Snipinal Logo
+const SnipinalLogo = ({ className, active }: { className?: string; active?: boolean }) => (
+  <div className={cn("flex items-center justify-center", className)}>
+    <Zap className={cn("w-8 h-8 md:w-10 md:h-10", active ? "text-primary-foreground" : "text-primary")} />
+  </div>
+);
+
 const HeroSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -170,20 +199,42 @@ const HeroSection = () => {
                       {activeStep > index ? (
                         <Check className="w-8 h-8 md:w-10 md:h-10 text-success" />
                       ) : index === 0 ? (
-                        <span className={cn(
-                          "text-2xl md:text-3xl font-bold",
-                          activeStep === index ? "text-primary-foreground" : "text-foreground"
-                        )}>A</span>
+                        // Amazon Logo
+                        <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+                          <path 
+                            d="M32 8c-2.2 0-4.2.3-6 .9V22c1.8-.6 3.8-.9 6-.9s4.2.3 6 .9V8.9C36.2 8.3 34.2 8 32 8z" 
+                            className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
+                          />
+                          <path 
+                            d="M52 42c-4 3-10 5-18 5s-14-2-18-5c-.5-.4-.3-1 .3-.7 4 2.5 10 4 17.7 4 6 0 12.5-1.2 17.3-3.8.8-.4 1.2.5.7 1.5z" 
+                            className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
+                          />
+                          <path 
+                            d="M54 40c-.5-.6-3-.3-4.2-.1-.3 0-.4-.3-.1-.5 2-1.4 5.3-1 5.7-.5.4.5-.1 4-2 5.6-.3.2-.6.1-.4-.2.4-1.1 1.5-3.7 1-4.3z" 
+                            className={cn(activeStep === index ? "fill-primary-foreground" : "fill-warning")}
+                          />
+                          <text x="32" y="34" textAnchor="middle" dominantBaseline="middle" className={cn("font-bold", activeStep === index ? "fill-primary-foreground" : "fill-foreground")} style={{ fontSize: '18px' }}>
+                            amazon
+                          </text>
+                        </svg>
                       ) : index === 1 ? (
-                        <Zap className={cn(
-                          "w-8 h-8 md:w-10 md:h-10",
-                          activeStep === index ? "text-primary-foreground" : "text-primary"
-                        )} />
+                        // Snipinal Logo
+                        <div className="flex flex-col items-center">
+                          <Zap className={cn(
+                            "w-8 h-8 md:w-10 md:h-10",
+                            activeStep === index ? "text-primary-foreground" : "text-primary"
+                          )} />
+                        </div>
                       ) : (
-                        <span className={cn(
-                          "text-2xl md:text-3xl font-bold",
-                          activeStep === index ? "text-primary-foreground" : "text-foreground"
-                        )}>e</span>
+                        // eBay Logo
+                        <svg viewBox="0 0 64 64" className="w-12 h-12 md:w-14 md:h-14">
+                          <text x="32" y="36" textAnchor="middle" dominantBaseline="middle" className="font-bold" style={{ fontSize: '20px' }}>
+                            <tspan fill={activeStep === index ? "#fff" : "#E53238"}>e</tspan>
+                            <tspan fill={activeStep === index ? "#fff" : "#0064D2"}>B</tspan>
+                            <tspan fill={activeStep === index ? "#fff" : "#F5AF02"}>a</tspan>
+                            <tspan fill={activeStep === index ? "#fff" : "#86B817"}>y</tspan>
+                          </text>
+                        </svg>
                       )}
                       
                       {/* Pulse ring when active */}
