@@ -4,12 +4,14 @@ import { Check, Crown, Zap, Rocket, Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useSubscription } from '@/hooks/useSubscription';
+import { usePlans } from '@/hooks/usePlans';
 import { useRealtimePlans, useRealtimeUserPlan } from '@/hooks/useRealtimeSync';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-const planIcons = {
+const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   free: Crown,
   starter: Zap,
   growth: Rocket,
@@ -27,6 +29,7 @@ export default function Subscription() {
     openCustomerPortal,
     checkSubscription 
   } = useSubscription();
+  const { plans, isLoading: plansLoading, getPlanByName } = usePlans();
 
   const refreshCallback = useCallback(() => {
     checkSubscription();
@@ -36,13 +39,15 @@ export default function Subscription() {
   useRealtimePlans(refreshCallback);
   useRealtimeUserPlan(user?.id, refreshCallback);
 
-  if (isLoading) {
+  if (isLoading || plansLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
+
+  const currentPlanData = getPlanByName(planName);
 
   return (
     <div className="space-y-6">
@@ -64,7 +69,7 @@ export default function Subscription() {
       </div>
 
       {/* Current Plan Status */}
-      {subscribed && subscriptionEnd && (
+      {subscribed && subscriptionEnd && currentPlanData && (
         <Card className="border-primary/50 bg-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -72,7 +77,7 @@ export default function Subscription() {
               Active Subscription
             </CardTitle>
             <CardDescription>
-              Your {PLANS[planName as keyof typeof PLANS]?.displayName || planName} plan renews on{' '}
+              Your {currentPlanData.display_name} plan renews on{' '}
               {format(new Date(subscriptionEnd), 'MMMM d, yyyy')}
             </CardDescription>
           </CardHeader>
@@ -80,15 +85,20 @@ export default function Subscription() {
       )}
 
       {/* Plans Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {Object.entries(PLANS).map(([key, plan], index) => {
-          const Icon = planIcons[key as keyof typeof planIcons];
-          const isCurrentPlan = planName === key;
-          const isPaid = plan.priceMonthly > 0;
+      <div className={cn(
+        "grid gap-6",
+        plans.length <= 2 ? "md:grid-cols-2" :
+        plans.length === 3 ? "md:grid-cols-3" :
+        "md:grid-cols-2 lg:grid-cols-4"
+      )}>
+        {plans.map((plan, index) => {
+          const Icon = planIcons[plan.name] || Zap;
+          const isCurrentPlan = planName === plan.name;
+          const isPaid = plan.price_monthly > 0;
 
           return (
             <motion.div
-              key={key}
+              key={plan.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -104,11 +114,11 @@ export default function Subscription() {
                     <div className="p-2 rounded-lg bg-primary/10">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle>{plan.displayName}</CardTitle>
+                    <CardTitle>{plan.display_name}</CardTitle>
                   </div>
                   <CardDescription>
                     <span className="text-2xl font-bold text-foreground">
-                      ${plan.priceMonthly}
+                      ${plan.price_monthly}
                     </span>
                     {isPaid && <span className="text-muted-foreground">/month</span>}
                   </CardDescription>
@@ -125,8 +135,8 @@ export default function Subscription() {
                   <Button
                     className="w-full"
                     variant={isCurrentPlan ? 'secondary' : 'default'}
-                    disabled={isCurrentPlan || !isPaid}
-                    onClick={() => isPaid && createCheckout(key as keyof typeof PLANS)}
+                    disabled={isCurrentPlan || !isPaid || !plan.stripe_price_id_monthly}
+                    onClick={() => isPaid && plan.stripe_price_id_monthly && createCheckout(plan.stripe_price_id_monthly)}
                   >
                     {isCurrentPlan 
                       ? 'Current Plan' 

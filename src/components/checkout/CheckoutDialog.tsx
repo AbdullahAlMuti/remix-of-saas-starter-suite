@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CouponInput } from './CouponInput';
-import { PLANS } from '@/hooks/useSubscription';
+import { Plan } from '@/hooks/usePlans';
 
 interface CouponData {
   id: string;
@@ -21,27 +21,28 @@ interface CouponData {
   maxDiscountAmount: number | null;
 }
 
-interface CheckoutDialogProps {
+export interface CheckoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  planKey: keyof typeof PLANS;
+  plan: Plan | null;
   onCheckout: (couponCode?: string) => Promise<void>;
 }
 
-const planIcons = {
+const planIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   free: Crown,
   starter: Zap,
   growth: Rocket,
   enterprise: Building2,
 };
 
-export function CheckoutDialog({ open, onOpenChange, planKey, onCheckout }: CheckoutDialogProps) {
+export function CheckoutDialog({ open, onOpenChange, plan, onCheckout }: CheckoutDialogProps) {
   const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const plan = PLANS[planKey];
-  const Icon = planIcons[planKey];
-  const originalPrice = plan.priceMonthly;
+  if (!plan) return null;
+
+  const Icon = planIcons[plan.name] || Zap;
+  const originalPrice = plan.price_monthly;
   const discountAmount = appliedCoupon?.discountAmount || 0;
   const finalPrice = Math.max(0, originalPrice - discountAmount);
 
@@ -76,7 +77,7 @@ export function CheckoutDialog({ open, onOpenChange, planKey, onCheckout }: Chec
                 <Icon className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">{plan.displayName} Plan</h3>
+                <h3 className="font-semibold text-foreground">{plan.display_name} Plan</h3>
                 <p className="text-sm text-muted-foreground">Monthly subscription</p>
               </div>
             </div>
@@ -95,7 +96,7 @@ export function CheckoutDialog({ open, onOpenChange, planKey, onCheckout }: Chec
 
           {/* Coupon Input */}
           <CouponInput
-            planId={planKey}
+            planId={plan.id}
             orderAmount={originalPrice}
             onCouponApplied={setAppliedCoupon}
             appliedCoupon={appliedCoupon}
