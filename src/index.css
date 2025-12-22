@@ -12,60 +12,60 @@
 @layer base {
   :root {
     /* ─── Light Mode ─── */
-    /* Primary Background - Clean, slightly warm white */
-    --background: 210 20% 99%;
-    --foreground: 220 20% 15%;
+    /* Primary Background - Warm off-white/cream */
+    --background: 30 20% 97%;
+    --foreground: 20 15% 20%;
 
-    /* Cards - Subtle off-white for depth */
+    /* Cards - Clean white for contrast */
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 15%;
+    --card-foreground: 20 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    --popover-foreground: 20 15% 20%;
 
-    /* Primary - Professional teal for CTAs */
-    --primary: 173 58% 39%;
+    /* Primary - Warm orange for CTAs */
+    --primary: 24 85% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Soft neutral gray */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 15% 35%;
+    /* Secondary - Soft warm gray */
+    --secondary: 30 15% 95%;
+    --secondary-foreground: 20 15% 35%;
 
-    /* Muted - Subtle backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 50%;
+    /* Muted - Subtle warm backgrounds */
+    --muted: 30 12% 94%;
+    --muted-foreground: 20 10% 50%;
 
-    /* Accent - Warm coral for highlights */
-    --accent: 12 76% 61%;
+    /* Accent - Coral/peach for highlights */
+    --accent: 16 80% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders - Subtle, neutral */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 173 58% 39%;
+    /* Borders - Warm neutral */
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 24 85% 55%;
 
     --radius: 0.625rem;
 
     /* ─── Custom Design Tokens ─── */
-    --gradient-primary: linear-gradient(135deg, hsl(173, 58%, 39%) 0%, hsl(173, 65%, 32%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(220, 20%, 97%) 0%, hsl(0, 0%, 100%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(220, 14%, 99%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(12, 76%, 61%) 0%, hsl(25, 95%, 53%) 100%);
-    --gradient-cta: linear-gradient(135deg, hsl(173, 58%, 39%) 0%, hsl(173, 60%, 45%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(24, 85%, 55%) 0%, hsl(20, 90%, 50%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(30, 20%, 97%) 0%, hsl(30, 15%, 95%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(30, 10%, 99%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(16, 80%, 60%) 0%, hsl(24, 85%, 55%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(24, 85%, 55%) 0%, hsl(20, 90%, 50%) 100%);
     
-    --shadow-sm: 0 1px 2px hsl(220, 15%, 15%, 0.04);
-    --shadow-md: 0 4px 6px -1px hsl(220, 15%, 15%, 0.06), 0 2px 4px -2px hsl(220, 15%, 15%, 0.04);
-    --shadow-lg: 0 10px 15px -3px hsl(220, 15%, 15%, 0.08), 0 4px 6px -4px hsl(220, 15%, 15%, 0.04);
-    --shadow-xl: 0 20px 25px -5px hsl(220, 15%, 15%, 0.1), 0 8px 10px -6px hsl(220, 15%, 15%, 0.04);
+    --shadow-sm: 0 1px 2px hsl(20, 15%, 15%, 0.04);
+    --shadow-md: 0 4px 6px -1px hsl(20, 15%, 15%, 0.06), 0 2px 4px -2px hsl(20, 15%, 15%, 0.04);
+    --shadow-lg: 0 10px 15px -3px hsl(20, 15%, 15%, 0.08), 0 4px 6px -4px hsl(20, 15%, 15%, 0.04);
+    --shadow-xl: 0 20px 25px -5px hsl(20, 15%, 15%, 0.1), 0 8px 10px -6px hsl(20, 15%, 15%, 0.04);
     
-    --glow-primary: 0 4px 20px hsl(173, 58%, 39%, 0.2);
-    --glow-accent: 0 4px 15px hsl(12, 76%, 61%, 0.15);
+    --glow-primary: 0 4px 20px hsl(24, 85%, 55%, 0.25);
+    --glow-accent: 0 4px 15px hsl(16, 80%, 60%, 0.2);
     
-    --glass-bg: hsl(0, 0%, 100%, 0.85);
-    --glass-border: hsl(220, 13%, 91%, 0.8);
+    --glass-bg: hsl(0, 0%, 100%, 0.9);
+    --glass-border: hsl(30, 10%, 88%, 0.8);
 
     /* Platform brand colors */
     --amazon-orange: 33 100% 50%;
@@ -75,38 +75,38 @@
     --info: 199 89% 48%;
 
     /* Text hierarchy */
-    --text-primary: 220 20% 15%;
-    --text-secondary: 220 10% 45%;
-    --text-muted: 220 10% 60%;
+    --text-primary: 20 15% 20%;
+    --text-secondary: 20 10% 45%;
+    --text-muted: 20 8% 55%;
 
-    /* Landing page tokens */
-    --warm-bg: 220 20% 97%;
-    --warm-glow: 173 40% 90%;
-    --warm-accent: 173 58% 39%;
-    --warm-accent-soft: 173 40% 95%;
-    --warm-text: 220 20% 15%;
-    --warm-text-muted: 220 10% 50%;
-    --warm-border: 220 13% 91%;
-    --warm-cta: 173 58% 39%;
-    --warm-cta-hover: 173 58% 34%;
+    /* Landing page tokens - Warm orange theme */
+    --warm-bg: 30 20% 97%;
+    --warm-glow: 24 60% 92%;
+    --warm-accent: 24 85% 55%;
+    --warm-accent-soft: 24 50% 95%;
+    --warm-text: 20 15% 20%;
+    --warm-text-muted: 20 10% 50%;
+    --warm-border: 30 10% 88%;
+    --warm-cta: 24 85% 55%;
+    --warm-cta-hover: 24 85% 48%;
     --warm-cta-text: 0 0% 100%;
     --warm-star: 45 93% 47%;
     --warm-trust: 152 69% 40%;
-    --warm-chrome: 220 10% 50%;
-    --warm-tab-bg: 220 14% 96%;
+    --warm-chrome: 20 10% 50%;
+    --warm-tab-bg: 30 15% 95%;
     --warm-card: 0 0% 100%;
-    --warm-flow: 220 10% 75%;
-    --warm-badge: 173 40% 95%;
+    --warm-flow: 24 40% 80%;
+    --warm-badge: 24 50% 95%;
 
-    /* Sidebar */
-    --sidebar-background: 220 20% 98%;
-    --sidebar-foreground: 220 20% 15%;
-    --sidebar-primary: 173 58% 39%;
+    /* Sidebar - Clean white with orange accents */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 20 15% 20%;
+    --sidebar-primary: 24 85% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 95%;
-    --sidebar-accent-foreground: 220 15% 35%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 173 58% 39%;
+    --sidebar-accent: 30 15% 95%;
+    --sidebar-accent-foreground: 20 15% 35%;
+    --sidebar-border: 30 10% 90%;
+    --sidebar-ring: 24 85% 55%;
   }
 
   .dark {
