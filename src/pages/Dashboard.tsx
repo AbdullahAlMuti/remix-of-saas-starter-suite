@@ -21,6 +21,7 @@ import { useSubscription, PLANS } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/dashboard/StatsCard';
+import { PlanOverview } from '@/components/dashboard/PlanOverview';
 import { cn } from '@/lib/utils';
 
 interface DashboardStats {
@@ -297,59 +298,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Credits & Quick Actions */}
+        {/* Right Column - Plan Overview & Quick Actions */}
         <div className="space-y-4">
-          {/* Credits Card */}
-          <div className="bg-card border border-border rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">AI Credits</p>
-                  <p className="text-xs text-muted-foreground">This billing period</p>
-                </div>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-7 w-7 p-0"
-                onClick={() => checkSubscription()}
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-baseline justify-between">
-                <span className="text-3xl font-display font-semibold text-foreground">
-                  {stats.creditsRemaining}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  / {stats.creditsMax === 9999 ? '∞' : stats.creditsMax}
-                </span>
-              </div>
-              
-              <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full rounded-full transition-all",
-                    creditsPercent > 50 ? "bg-primary" : 
-                    creditsPercent > 20 ? "bg-amber-500" : "bg-red-500"
-                  )}
-                  style={{ width: `${creditsPercent}%` }}
-                />
-              </div>
-              
-              {stats.creditsRemaining < 10 && planName === 'free' && (
-                <p className="text-xs text-amber-400 flex items-center gap-1.5">
-                  <Zap className="h-3 w-3" />
-                  Low credits - upgrade for more
-                </p>
-              )}
-            </div>
-          </div>
+          {/* Plan Overview Card */}
+          <PlanOverview 
+            creditsRemaining={stats.creditsRemaining} 
+            creditsMax={stats.creditsMax} 
+          />
 
           {/* Quick Actions */}
           <div className="bg-card border border-border rounded-xl p-5">
