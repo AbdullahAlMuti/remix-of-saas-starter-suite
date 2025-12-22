@@ -109,8 +109,11 @@ const AnimatedCounter = ({ end, prefix = "", suffix = "", duration = 2000 }: { e
 const CourseSection = () => {
   return (
     <section className="relative overflow-hidden">
-      {/* Hero Section with Gradient */}
-      <div className="relative bg-gradient-to-br from-primary via-primary/90 to-accent py-24 overflow-hidden">
+      {/* Hero Section with Soft Gradient */}
+      <div className="relative py-16 overflow-hidden">
+        {/* Soft gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 pointer-events-none" />
+        
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
@@ -120,7 +123,7 @@ const CourseSection = () => {
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute text-primary-foreground/10 text-4xl font-bold"
+              className="absolute text-primary/20 text-4xl font-bold"
               style={{
                 left: `${15 + i * 15}%`,
                 top: `${20 + (i % 3) * 25}%`,
@@ -181,12 +184,12 @@ const CourseSection = () => {
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                <span className="text-sm font-medium text-primary-foreground">
+                <span className="text-sm font-medium text-foreground">
                   🔥 347 people enrolled this week
                 </span>
               </motion.div>
 
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
                 Turn <span className="text-success">$0</span> Into a{" "}
                 <span className="relative">
                   <span className="relative z-10">Profitable</span>
@@ -201,7 +204,7 @@ const CourseSection = () => {
                 eBay Business
               </h1>
               
-              <p className="text-primary-foreground/80 text-lg md:text-xl mb-8 max-w-lg">
+              <p className="text-muted-foreground text-lg md:text-xl mb-8 max-w-lg">
                 Join <span className="text-success font-semibold">2,500+ students</span> who are already making money with our proven dropshipping system. No inventory. No experience needed.
               </p>
 
@@ -222,9 +225,9 @@ const CourseSection = () => {
                 <Button 
                   variant="outline"
                   size="lg"
-                  className="h-16 px-8 bg-transparent border-2 border-primary-foreground/30 hover:bg-primary-foreground/10 text-primary-foreground font-semibold rounded-2xl"
+                  className="h-16 px-8 border-2 border-primary/30 hover:bg-primary/10 text-foreground font-semibold rounded-2xl"
                 >
-                  <Play className="w-5 h-5 mr-2 fill-primary-foreground" />
+                  <Play className="w-5 h-5 mr-2 fill-primary" />
                   Watch Free Preview
                 </Button>
               </div>
@@ -233,13 +236,13 @@ const CourseSection = () => {
               <div className="space-y-4">
                 <div className="flex items-baseline gap-4">
                   <motion.span 
-                    className="text-6xl font-bold text-primary-foreground"
+                    className="text-6xl font-bold text-foreground"
                     animate={{ scale: [1, 1.02, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     $199
                   </motion.span>
-                  <span className="text-3xl text-primary-foreground/40 line-through">$399</span>
+                  <span className="text-3xl text-muted-foreground line-through">$399</span>
                   <span className="px-3 py-1 bg-destructive text-destructive-foreground text-sm font-bold rounded-lg animate-pulse">
                     50% OFF
                   </span>
@@ -250,7 +253,7 @@ const CourseSection = () => {
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   <span className="text-2xl">⏰</span>
-                  <span className="text-primary-foreground font-medium">
+                  <span className="text-foreground font-medium">
                     Sale ends in <span className="font-bold text-destructive">2 days 14 hours</span>
                   </span>
                 </motion.div>
