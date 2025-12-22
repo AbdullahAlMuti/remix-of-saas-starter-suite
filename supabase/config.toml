@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.amazon-inventory-sync]
 verify_jwt = false
+
+[functions.send-inventory-notification]
+verify_jwt = false
