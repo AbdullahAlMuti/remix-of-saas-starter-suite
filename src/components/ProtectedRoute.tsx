@@ -35,8 +35,16 @@ export function ProtectedRoute({
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Require plan selection - users without active subscription must select a plan first
+  // Check if user has a paid subscription (any plan except free without payment)
+  // Users need to complete payment to access dashboard
   if (!subscribed) {
+    // Check if there's a pending plan selection in localStorage
+    const pendingPlanId = localStorage.getItem('selectedPlanId');
+    if (pendingPlanId) {
+      // User has selected a plan but hasn't completed payment - let Auth handle checkout
+      return <Navigate to="/auth" replace />;
+    }
+    // No pending plan - redirect to plan selection
     return <Navigate to="/select-plan" replace />;
   }
 
@@ -49,7 +57,7 @@ export function ProtectedRoute({
   }
 
   if (requireSubscription && !subscribed) {
-    return <Navigate to="/payment-required" replace />;
+    return <Navigate to="/select-plan" replace />;
   }
 
   return <>{children}</>;

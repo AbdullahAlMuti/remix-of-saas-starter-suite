@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Loader2, Sparkles } from 'lucide-react';
+import { Check, Loader2, Sparkles, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -38,21 +38,15 @@ export default function SelectPlan() {
   const [couponError, setCouponError] = useState<string | null>(null);
   
   const { user, isLoading: authLoading } = useAuth();
-  const { createCheckout, subscribed, planName } = useSubscription();
+  const { createCheckout, subscribed, planName, isLoading: subscriptionLoading } = useSubscription();
   const navigate = useNavigate();
 
+  // If user is logged in and has an active paid subscription, redirect to dashboard
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth', { replace: true });
-    }
-  }, [user, authLoading, navigate]);
-
-  // If user already has an active paid subscription, redirect to dashboard
-  useEffect(() => {
-    if (subscribed && planName && planName !== 'free') {
+    if (!authLoading && !subscriptionLoading && user && subscribed && planName && planName !== 'free') {
       navigate('/dashboard', { replace: true });
     }
-  }, [subscribed, planName, navigate]);
+  }, [user, subscribed, planName, authLoading, subscriptionLoading, navigate]);
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -138,6 +132,18 @@ export default function SelectPlan() {
     const plan = plans.find(p => p.id === selectedPlan);
     if (!plan) return;
 
+    // If user is not logged in, save plan selection and redirect to signup
+    if (!user) {
+      localStorage.setItem('selectedPlanId', selectedPlan);
+      localStorage.setItem('selectedPlanName', plan.name);
+      if (appliedCoupon) {
+        localStorage.setItem('appliedCouponCode', appliedCoupon.code);
+      }
+      navigate('/auth', { state: { mode: 'signup', selectedPlan: plan } });
+      return;
+    }
+
+    // User is logged in - proceed directly to checkout
     if (!plan.stripe_price_id_monthly) {
       toast.error('This plan is not available for checkout');
       return;
@@ -167,7 +173,7 @@ export default function SelectPlan() {
     }
   };
 
-  if (authLoading || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -182,6 +188,16 @@ export default function SelectPlan() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto"
       >
+        {/* Back button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Button>
+
         {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 mb-4">
@@ -194,7 +210,10 @@ export default function SelectPlan() {
             Choose Your Plan
           </h1>
           <p className="text-muted-foreground">
-            Select a plan to get started with your 14-day trial
+            {user 
+              ? 'Select a plan to complete your subscription'
+              : 'Select a plan to get started with your 14-day trial'
+            }
           </p>
         </div>
 
@@ -278,8 +297,8 @@ export default function SelectPlan() {
           })}
         </div>
 
-        {/* Coupon Input */}
-        {selectedPlan && (
+        {/* Coupon Input - only show for logged in users */}
+        {selectedPlan && user && (
           <div className="max-w-md mx-auto mb-8">
             <div className="space-y-3">
               <span className="text-sm font-medium">Have a coupon code?</span>
@@ -336,13 +355,28 @@ export default function SelectPlan() {
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Processing...
               </>
-            ) : (
+            ) : user ? (
               'Continue to Payment'
+            ) : (
+              'Continue to Sign Up'
             )}
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
             All plans include a 14-day trial period. Cancel anytime.
           </p>
+          
+          {/* Login link for existing users */}
+          {!user && (
+            <p className="text-sm text-muted-foreground mt-4">
+              Already have an account?{' '}
+              <button
+                onClick={() => navigate('/auth')}
+                className="text-primary hover:underline font-medium"
+              >
+                Sign in
+              </button>
+            </p>
+          )}
         </div>
       </motion.div>
     </div>

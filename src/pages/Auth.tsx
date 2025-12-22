@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -15,8 +16,23 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 
+interface SelectedPlan {
+  id: string;
+  name: string;
+  display_name: string;
+  price_monthly: number;
+  stripe_price_id_monthly: string | null;
+}
+
 export default function Auth() {
-  const [mode, setMode] = useState<AuthMode>('login');
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Get mode and selected plan from navigation state
+  const initialMode = (location.state as { mode?: AuthMode })?.mode || 'login';
+  const selectedPlanFromState = (location.state as { selectedPlan?: SelectedPlan })?.selectedPlan;
+  
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -24,19 +40,85 @@ export default function Auth() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
-  const { signIn, signUp, user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { signIn, signUp, user, isLoading: authLoading } = useAuth();
+  const { createCheckout, subscribed, planName, isLoading: subscriptionLoading } = useSubscription();
 
-  const from = (location.state as { from?: Location })?.from?.pathname || '/dashboard';
-
+  // Handle redirect after login/signup
   useEffect(() => {
+    if (authLoading || subscriptionLoading) return;
+    
     if (user) {
-      // Always redirect to plan selection for new users or those without active subscription
+      // Check if there's a selected plan in localStorage (new signup flow)
+      const selectedPlanId = localStorage.getItem('selectedPlanId');
+      const appliedCouponCode = localStorage.getItem('appliedCouponCode');
+      
+      if (selectedPlanId) {
+        // New user with selected plan - proceed to checkout
+        processCheckoutForNewUser(selectedPlanId, appliedCouponCode);
+      } else if (subscribed && planName && planName !== 'free') {
+        // Existing user with active subscription - go to dashboard
+        navigate('/dashboard', { replace: true });
+      } else {
+        // User without subscription - redirect to select plan
+        navigate('/select-plan', { replace: true });
+      }
+    }
+  }, [user, authLoading, subscriptionLoading, subscribed, planName, navigate]);
+
+  const processCheckoutForNewUser = async (planId: string, couponCode: string | null) => {
+    if (isProcessingCheckout) return;
+    setIsProcessingCheckout(true);
+    
+    try {
+      // Fetch the plan to get stripe_price_id
+      const { data: plan, error: planError } = await supabase
+        .from('plans')
+        .select('stripe_price_id_monthly')
+        .eq('id', planId)
+        .single();
+
+      if (planError || !plan?.stripe_price_id_monthly) {
+        toast.error('Failed to load plan details. Please select a plan again.');
+        localStorage.removeItem('selectedPlanId');
+        localStorage.removeItem('selectedPlanName');
+        localStorage.removeItem('appliedCouponCode');
+        navigate('/select-plan', { replace: true });
+        return;
+      }
+
+      const { url, error } = await createCheckout(
+        plan.stripe_price_id_monthly,
+        false,
+        couponCode || undefined
+      );
+
+      if (error) {
+        toast.error(error);
+        // Clear stored plan and redirect to select plan
+        localStorage.removeItem('selectedPlanId');
+        localStorage.removeItem('selectedPlanName');
+        localStorage.removeItem('appliedCouponCode');
+        navigate('/select-plan', { replace: true });
+        return;
+      }
+
+      if (url) {
+        // Clear stored plan before redirecting to Stripe
+        localStorage.removeItem('selectedPlanId');
+        localStorage.removeItem('selectedPlanName');
+        localStorage.removeItem('appliedCouponCode');
+        window.location.href = url;
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to process checkout');
+      localStorage.removeItem('selectedPlanId');
+      localStorage.removeItem('selectedPlanName');
+      localStorage.removeItem('appliedCouponCode');
       navigate('/select-plan', { replace: true });
     }
-  }, [user, navigate]);
+  };
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -76,18 +158,28 @@ export default function Auth() {
         toast.success('Password reset email sent! Check your inbox.');
       } else if (mode === 'login') {
         const { error } = await signIn(email, password);
-        if (!error) {
-          // Will be redirected by useEffect when user state updates
+        if (error) {
+          throw error;
         }
+        // Redirect will be handled by useEffect
       } else {
         const { error } = await signUp(email, password, fullName);
-        if (!error) {
-          setMode('login');
-          toast.success('Account created! Please sign in.');
+        if (error) {
+          throw error;
         }
+        // For signup, we'll wait for the user to confirm email or auto-login
+        toast.success('Account created! Please check your email to confirm.');
       }
     } catch (error: any) {
-      toast.error(error.message || 'An error occurred');
+      // Handle specific error cases
+      if (error.message?.includes('User already registered')) {
+        toast.error('This email is already registered. Please sign in instead.');
+        setMode('login');
+      } else if (error.message?.includes('Invalid login credentials')) {
+        toast.error('Invalid email or password. Please try again.');
+      } else {
+        toast.error(error.message || 'An error occurred');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -108,12 +200,27 @@ export default function Auth() {
   };
 
   const getDescription = () => {
+    if (mode === 'signup' && selectedPlanFromState) {
+      return `Complete your signup to start with the ${selectedPlanFromState.display_name} plan`;
+    }
     switch (mode) {
       case 'login': return 'Sign in to access your dashboard';
       case 'signup': return 'Start your dropshipping automation journey';
       case 'forgot-password': return 'Enter your email to receive a reset link';
     }
   };
+
+  // Show loading while processing checkout
+  if (isProcessingCheckout) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Setting up your subscription...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -132,6 +239,18 @@ export default function Auth() {
             <span className="text-2xl font-display font-bold text-foreground">SellerSuit</span>
           </a>
         </div>
+
+        {/* Selected Plan Badge */}
+        {mode === 'signup' && selectedPlanFromState && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 text-center"
+          >
+            <p className="text-sm text-muted-foreground">Selected plan:</p>
+            <p className="font-semibold text-primary">{selectedPlanFromState.display_name} - ${selectedPlanFromState.price_monthly}/month</p>
+          </motion.div>
+        )}
 
         {/* Auth Card */}
         <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
@@ -302,6 +421,29 @@ export default function Auth() {
           >
             You may need to confirm your email before signing in.
           </motion.p>
+        )}
+
+        {/* Back to plan selection for signup mode */}
+        {mode === 'signup' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-center mt-4"
+          >
+            <Button
+              variant="ghost"
+              onClick={() => {
+                localStorage.removeItem('selectedPlanId');
+                localStorage.removeItem('selectedPlanName');
+                localStorage.removeItem('appliedCouponCode');
+                navigate('/select-plan');
+              }}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Change plan selection
+            </Button>
+          </motion.div>
         )}
       </motion.div>
     </div>
