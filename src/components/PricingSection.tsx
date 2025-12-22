@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { Check, Zap, Rocket, Building2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription, PLANS } from "@/hooks/useSubscription";
 import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { CheckoutDialog } from "./checkout/CheckoutDialog";
 
 const planIcons = {
   free: Crown,
@@ -42,6 +43,9 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   const { createCheckout, planName: currentPlanName } = useSubscription();
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
+  
+  const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
+  const [selectedPlanKey, setSelectedPlanKey] = useState<keyof typeof PLANS>('starter');
 
   const handlePlanSelect = async (planKey: string) => {
     const plan = PLANS[planKey as keyof typeof PLANS];
@@ -55,11 +59,17 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
       return;
     }
 
+    // For paid plans, open the checkout dialog
     if (plan.stripePriceId) {
-      await createCheckout(planKey as keyof typeof PLANS);
+      setSelectedPlanKey(planKey as keyof typeof PLANS);
+      setCheckoutDialogOpen(true);
     } else {
       navigate('/dashboard/subscription');
     }
+  };
+
+  const handleCheckout = async (couponCode?: string) => {
+    await createCheckout(selectedPlanKey, couponCode);
   };
 
   return (
@@ -217,6 +227,14 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
           </p>
         </motion.div>
       </div>
+
+      {/* Checkout Dialog */}
+      <CheckoutDialog
+        open={checkoutDialogOpen}
+        onOpenChange={setCheckoutDialogOpen}
+        planKey={selectedPlanKey}
+        onCheckout={handleCheckout}
+      />
     </section>
   );
 });
