@@ -102,6 +102,44 @@ async function fetchAmazonProductData(
   }
 }
 
+interface NotificationPayload {
+  userId: string;
+  listingId: string;
+  listingTitle: string;
+  notificationType: 'out_of_stock' | 'low_stock' | 'price_increase' | 'price_decrease';
+  oldValue?: number | null;
+  newValue?: number | null;
+  percentageChange?: number;
+}
+
+// Send notification via the notification edge function
+async function sendNotification(supabase: any, payload: NotificationPayload) {
+  try {
+    console.log('[Notification] Sending notification:', payload.notificationType);
+    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const response = await fetch(`${supabaseUrl}/functions/v1/send-inventory-notification`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Notification] Failed to send:', errorText);
+    } else {
+      console.log('[Notification] Sent successfully');
+    }
+  } catch (error) {
+    console.error('[Notification] Error sending notification:', error);
+  }
+}
+
 // Main sync function - using any type for supabase client since new tables not in types yet
 async function syncInventory(supabase: any, listingId?: string) {
   console.log('[Sync] Starting inventory sync...');
@@ -181,6 +219,8 @@ async function syncInventory(supabase: any, listingId?: string) {
     if (productData) {
       const priceChanged = listing.amazon_price !== productData.price;
       const stockChanged = listing.amazon_stock_quantity !== productData.stockQuantity;
+      const oldPrice = listing.amazon_price;
+      const oldStock = listing.amazon_stock_quantity;
 
       // Update listing
       const { error: updateError } = await supabase
@@ -212,6 +252,43 @@ async function syncInventory(supabase: any, listingId?: string) {
         new_stock: productData.stockQuantity,
         status: 'success',
       });
+
+      // Send notifications for significant changes
+      // Out of stock notification
+      if (productData.stockStatus === 'out_of_stock' && oldStock && oldStock > 0) {
+        await sendNotification(supabase, {
+          userId: listing.user_id,
+          listingId: listing.id,
+          listingTitle: listing.amazon_asin,
+          notificationType: 'out_of_stock',
+        });
+      }
+      // Low stock notification
+      else if (productData.stockStatus === 'low_stock' && oldStock && oldStock > 10) {
+        await sendNotification(supabase, {
+          userId: listing.user_id,
+          listingId: listing.id,
+          listingTitle: listing.amazon_asin,
+          notificationType: 'low_stock',
+          newValue: productData.stockQuantity,
+        });
+      }
+
+      // Price change notification
+      if (priceChanged && oldPrice && productData.price) {
+        const percentageChange = ((productData.price - oldPrice) / oldPrice) * 100;
+        const notificationType = percentageChange > 0 ? 'price_increase' : 'price_decrease';
+        
+        await sendNotification(supabase, {
+          userId: listing.user_id,
+          listingId: listing.id,
+          listingTitle: listing.amazon_asin,
+          notificationType,
+          oldValue: oldPrice,
+          newValue: productData.price,
+          percentageChange,
+        });
+      }
 
       results.push({
         id: listing.id,

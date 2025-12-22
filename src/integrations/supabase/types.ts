@@ -451,6 +451,95 @@ export type Database = {
           },
         ]
       }
+      notification_logs: {
+        Row: {
+          created_at: string
+          email_sent_to: string | null
+          error_message: string | null
+          id: string
+          listing_id: string | null
+          message: string
+          notification_type: string
+          status: string
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_sent_to?: string | null
+          error_message?: string | null
+          id?: string
+          listing_id?: string | null
+          message: string
+          notification_type: string
+          status?: string
+          subject: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_sent_to?: string | null
+          error_message?: string | null
+          id?: string
+          listing_id?: string | null
+          message?: string
+          notification_type?: string
+          status?: string
+          subject?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_settings: {
+        Row: {
+          created_at: string
+          email_notifications_enabled: boolean
+          id: string
+          notification_email: string | null
+          notify_low_stock: boolean
+          notify_out_of_stock: boolean
+          notify_price_decrease: boolean
+          notify_price_increase: boolean
+          price_change_threshold: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_notifications_enabled?: boolean
+          id?: string
+          notification_email?: string | null
+          notify_low_stock?: boolean
+          notify_out_of_stock?: boolean
+          notify_price_decrease?: boolean
+          notify_price_increase?: boolean
+          price_change_threshold?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_notifications_enabled?: boolean
+          id?: string
+          notification_email?: string | null
+          notify_low_stock?: boolean
+          notify_out_of_stock?: boolean
+          notify_price_decrease?: boolean
+          notify_price_increase?: boolean
+          price_change_threshold?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       plans: {
         Row: {
           created_at: string | null
