@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.dashboard-overview]
 verify_jwt = false
+
+[functions.amazon-inventory-sync]
+verify_jwt = false

@@ -10,7 +10,9 @@ import {
   ExternalLink,
   Edit,
   Trash2,
-  Search
+  Search,
+  Activity,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +54,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { format } from "date-fns";
+import InventoryStatusBadge from "@/components/listings/InventoryStatusBadge";
+import PriceUpdateIndicator from "@/components/listings/PriceUpdateIndicator";
 
 interface Listing {
   id: string;
@@ -65,6 +69,11 @@ interface Listing {
   amazon_url: string | null;
   status: string | null;
   auto_order_enabled: boolean | null;
+  amazon_stock_quantity?: number | null;
+  amazon_stock_status?: string | null;
+  price_last_updated?: string | null;
+  inventory_last_updated?: string | null;
+  sync_error?: string | null;
 }
 
 interface ListingStats {
@@ -84,10 +93,12 @@ export default function Listings() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showNewListingDialog, setShowNewListingDialog] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   // New listing form state
   const [newListing, setNewListing] = useState({
@@ -188,6 +199,43 @@ export default function Listings() {
       title: "Refreshed",
       description: "Listings data has been updated",
     });
+  };
+
+  const handleSyncInventory = async (listingId?: string) => {
+    setIsSyncing(true);
+    setSyncError(null);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('amazon-inventory-sync', {
+        body: { action: listingId ? 'sync' : 'sync-all', listingId },
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        toast({
+          title: "Sync Complete",
+          description: `Updated ${data.results?.length || 0} listings from Amazon`,
+        });
+        fetchListings();
+      } else {
+        setSyncError(data.error);
+        toast({
+          title: "Sync Failed",
+          description: data.error || "Failed to sync with Amazon",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error syncing inventory:', error);
+      toast({
+        title: "Error",
+        description: "Failed to sync inventory",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleCreateListing = async () => {
@@ -301,6 +349,25 @@ export default function Listings() {
           <p className="text-muted-foreground">Manage your eBay to Amazon product mappings.</p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleSyncInventory()}
+            disabled={isSyncing}
+          >
+            {isSyncing ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Syncing...
+              </>
+            ) : (
+              <>
+                <Activity className="h-4 w-4 mr-2" />
+                Sync Inventory
+              </>
+            )}
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -528,6 +595,7 @@ export default function Listings() {
                 <TableHead className="text-muted-foreground">SKU</TableHead>
                 <TableHead className="text-muted-foreground">EBAY PRICE</TableHead>
                 <TableHead className="text-muted-foreground">AMAZON COST</TableHead>
+                <TableHead className="text-muted-foreground">INVENTORY</TableHead>
                 <TableHead className="text-muted-foreground">PROFIT</TableHead>
                 <TableHead className="text-muted-foreground">STATUS</TableHead>
                 <TableHead className="text-muted-foreground text-right">ACTIONS</TableHead>
@@ -536,14 +604,14 @@ export default function Listings() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-12">
+                  <TableCell colSpan={9} className="text-center py-12">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                     <p className="text-muted-foreground mt-2">Loading listings...</p>
                   </TableCell>
                 </TableRow>
               ) : filteredListings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-12">
+                  <TableCell colSpan={9} className="text-center py-12">
                     <Package className="h-12 w-12 mx-auto text-muted-foreground/50" />
                     <p className="text-muted-foreground mt-2">No listings found</p>
                     <p className="text-sm text-muted-foreground/70">Click "New Listing" to add your first product</p>
@@ -587,7 +655,17 @@ export default function Listings() {
                         ${listing.ebay_price?.toFixed(2) || "0.00"}
                       </TableCell>
                       <TableCell className="text-foreground">
-                        ${listing.amazon_price?.toFixed(2) || "0.00"}
+                        <PriceUpdateIndicator 
+                          currentPrice={listing.amazon_price} 
+                          lastUpdated={listing.price_last_updated ?? null}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <InventoryStatusBadge 
+                          stockStatus={listing.amazon_stock_status ?? null}
+                          stockQuantity={listing.amazon_stock_quantity ?? null}
+                          lastUpdated={listing.inventory_last_updated ?? null}
+                        />
                       </TableCell>
                       <TableCell>
                         {profit !== null ? (

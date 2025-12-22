@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      amazon_settings: {
+        Row: {
+          client_id: string
+          client_secret: string
+          created_at: string
+          id: string
+          is_active: boolean
+          last_sync_at: string | null
+          marketplace: string
+          refresh_token: string
+          update_frequency_hours: number
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string
+          client_secret?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          marketplace?: string
+          refresh_token?: string
+          update_frequency_hours?: number
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          client_secret?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_sync_at?: string | null
+          marketplace?: string
+          refresh_token?: string
+          update_frequency_hours?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -237,21 +276,73 @@ export type Database = {
           },
         ]
       }
+      inventory_sync_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          listing_id: string | null
+          new_price: number | null
+          new_stock: number | null
+          old_price: number | null
+          old_stock: number | null
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          listing_id?: string | null
+          new_price?: number | null
+          new_stock?: number | null
+          old_price?: number | null
+          old_stock?: number | null
+          status?: string
+          sync_type: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          listing_id?: string | null
+          new_price?: number | null
+          new_stock?: number | null
+          old_price?: number | null
+          old_stock?: number | null
+          status?: string
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_sync_logs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           amazon_asin: string | null
           amazon_price: number | null
+          amazon_stock_quantity: number | null
+          amazon_stock_status: string | null
           amazon_url: string | null
           auto_order_enabled: boolean | null
           created_at: string | null
           ebay_item_id: string | null
           ebay_price: number | null
           id: string
+          inventory_last_updated: string | null
           inventory_status: string | null
           last_checked: string | null
+          price_last_updated: string | null
           pricing_rule: Json | null
           sku: string | null
           status: string | null
+          sync_error: string | null
           title: string | null
           updated_at: string | null
           user_id: string
@@ -259,17 +350,22 @@ export type Database = {
         Insert: {
           amazon_asin?: string | null
           amazon_price?: number | null
+          amazon_stock_quantity?: number | null
+          amazon_stock_status?: string | null
           amazon_url?: string | null
           auto_order_enabled?: boolean | null
           created_at?: string | null
           ebay_item_id?: string | null
           ebay_price?: number | null
           id?: string
+          inventory_last_updated?: string | null
           inventory_status?: string | null
           last_checked?: string | null
+          price_last_updated?: string | null
           pricing_rule?: Json | null
           sku?: string | null
           status?: string | null
+          sync_error?: string | null
           title?: string | null
           updated_at?: string | null
           user_id: string
@@ -277,17 +373,22 @@ export type Database = {
         Update: {
           amazon_asin?: string | null
           amazon_price?: number | null
+          amazon_stock_quantity?: number | null
+          amazon_stock_status?: string | null
           amazon_url?: string | null
           auto_order_enabled?: boolean | null
           created_at?: string | null
           ebay_item_id?: string | null
           ebay_price?: number | null
           id?: string
+          inventory_last_updated?: string | null
           inventory_status?: string | null
           last_checked?: string | null
+          price_last_updated?: string | null
           pricing_rule?: Json | null
           sku?: string | null
           status?: string | null
+          sync_error?: string | null
           title?: string | null
           updated_at?: string | null
           user_id?: string
