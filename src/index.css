@@ -61,6 +61,25 @@
     --ebay-blue: 211 100% 50%;
     --success: 142 76% 36%;
 
+    /* Warm trustworthy palette for landing */
+    --warm-bg: 40 40% 97%;
+    --warm-glow: 35 60% 70%;
+    --warm-accent: 25 70% 45%;
+    --warm-accent-soft: 30 50% 92%;
+    --warm-text: 30 15% 15%;
+    --warm-text-muted: 30 10% 45%;
+    --warm-border: 35 25% 88%;
+    --warm-cta: 240 10% 10%;
+    --warm-cta-hover: 240 10% 20%;
+    --warm-cta-text: 0 0% 100%;
+    --warm-star: 45 90% 50%;
+    --warm-trust: 145 40% 40%;
+    --warm-chrome: 210 15% 45%;
+    --warm-tab-bg: 35 30% 95%;
+    --warm-card: 40 30% 99%;
+    --warm-flow: 30 40% 75%;
+    --warm-badge: 35 40% 94%;
+
     /* Sidebar */
     --sidebar-background: 252 30% 98%;
     --sidebar-foreground: 240 10% 20%;
@@ -121,6 +140,25 @@
     --amazon-orange: 33 100% 50%;
     --ebay-blue: 211 100% 50%;
     --success: 142 76% 45%;
+
+    /* Warm trustworthy palette for landing (dark mode) */
+    --warm-bg: 30 15% 8%;
+    --warm-glow: 30 40% 20%;
+    --warm-accent: 30 65% 55%;
+    --warm-accent-soft: 30 30% 15%;
+    --warm-text: 35 20% 95%;
+    --warm-text-muted: 30 10% 60%;
+    --warm-border: 30 15% 20%;
+    --warm-cta: 35 20% 95%;
+    --warm-cta-hover: 35 15% 85%;
+    --warm-cta-text: 30 15% 8%;
+    --warm-star: 45 85% 55%;
+    --warm-trust: 145 50% 55%;
+    --warm-chrome: 210 20% 65%;
+    --warm-tab-bg: 30 15% 12%;
+    --warm-card: 30 15% 10%;
+    --warm-flow: 30 30% 35%;
+    --warm-badge: 30 20% 12%;
 
     /* Sidebar */
     --sidebar-background: 240 15% 6%;
