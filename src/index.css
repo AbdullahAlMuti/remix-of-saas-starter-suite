@@ -10,165 +10,177 @@
 
 @layer base {
   :root {
-    /* Light mode - Clean professional palette */
+    /* Light mode - Neutral Professional SaaS Palette */
+    /* White as Heaven - Primary background */
     --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    --foreground: 180 1% 25%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 240 10% 10%;
+    /* Cascading White - Cards and secondary surfaces */
+    --card: 0 9% 97%;
+    --card-foreground: 180 1% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 180 1% 25%;
 
-    /* Primary - Electric indigo */
-    --primary: 252 85% 55%;
+    /* Indigo Light - Primary actions */
+    --primary: 227 56% 61%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Soft purple */
-    --secondary: 252 20% 94%;
-    --secondary-foreground: 252 40% 30%;
+    /* Steam - Secondary/muted elements */
+    --secondary: 270 2% 87%;
+    --secondary-foreground: 180 1% 35%;
 
-    --muted: 240 10% 96%;
-    --muted-foreground: 240 5% 45%;
+    /* Muted surfaces */
+    --muted: 0 9% 97%;
+    --muted-foreground: 180 1% 45%;
 
-    /* Accent - Vibrant cyan */
-    --accent: 180 80% 45%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Indigo variant */
+    --accent: 227 45% 70%;
+    --accent-foreground: 227 56% 25%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 90%;
-    --input: 240 10% 90%;
-    --ring: 252 85% 55%;
+    /* Steam for borders */
+    --border: 270 2% 87%;
+    --input: 270 2% 87%;
+    --ring: 227 56% 61%;
 
     --radius: 0.75rem;
 
     /* Custom Snipinal tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(252, 85%, 55%) 0%, hsl(280, 80%, 55%) 50%, hsl(330, 85%, 60%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(252, 40%, 96%) 0%, hsl(0, 0%, 100%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(252, 20%, 98%) 0%, hsl(252, 15%, 95%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(180, 80%, 45%) 0%, hsl(252, 85%, 55%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(227, 56%, 61%) 0%, hsl(227, 56%, 50%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0, 9%, 97%) 0%, hsl(0, 0%, 100%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0, 9%, 97%) 0%, hsl(0, 0%, 100%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(227, 56%, 61%) 0%, hsl(227, 65%, 70%) 100%);
     
-    --glow-primary: 0 4px 20px hsl(252, 85%, 55%, 0.15);
-    --glow-accent: 0 4px 15px hsl(180, 80%, 45%, 0.12);
+    --glow-primary: 0 4px 20px hsl(227, 56%, 61%, 0.15);
+    --glow-accent: 0 4px 15px hsl(227, 56%, 61%, 0.12);
     
-    --glass-bg: hsl(0, 0%, 100%, 0.8);
-    --glass-border: hsl(240, 10%, 85%, 0.5);
+    --glass-bg: hsl(0, 0%, 100%, 0.9);
+    --glass-border: hsl(270, 2%, 87%, 0.8);
 
     /* Platform brand colors */
     --amazon-orange: 33 100% 50%;
     --ebay-blue: 211 100% 50%;
-    --success: 142 76% 36%;
+    --success: 142 60% 40%;
 
-    /* Warm trustworthy palette for landing */
-    --warm-bg: 40 40% 97%;
-    --warm-glow: 35 60% 70%;
-    --warm-accent: 25 70% 45%;
-    --warm-accent-soft: 30 50% 92%;
-    --warm-text: 30 15% 15%;
-    --warm-text-muted: 30 10% 45%;
-    --warm-border: 35 25% 88%;
-    --warm-cta: 240 10% 10%;
-    --warm-cta-hover: 240 10% 20%;
+    /* Elegant Ice - Secondary text */
+    --text-secondary: 12 6% 74%;
+    /* Sandpiper Cove - Muted text */
+    --text-muted: 180 1% 45%;
+
+    /* Landing page tokens (using new neutral palette) */
+    --warm-bg: 0 9% 97%;
+    --warm-glow: 227 45% 85%;
+    --warm-accent: 227 56% 61%;
+    --warm-accent-soft: 227 40% 94%;
+    --warm-text: 180 1% 20%;
+    --warm-text-muted: 180 1% 45%;
+    --warm-border: 270 2% 87%;
+    --warm-cta: 227 56% 61%;
+    --warm-cta-hover: 227 56% 55%;
     --warm-cta-text: 0 0% 100%;
     --warm-star: 45 90% 50%;
-    --warm-trust: 145 40% 40%;
-    --warm-chrome: 210 15% 45%;
-    --warm-tab-bg: 35 30% 95%;
-    --warm-card: 40 30% 99%;
-    --warm-flow: 30 40% 75%;
-    --warm-badge: 35 40% 94%;
+    --warm-trust: 142 60% 40%;
+    --warm-chrome: 180 1% 45%;
+    --warm-tab-bg: 0 9% 97%;
+    --warm-card: 0 0% 100%;
+    --warm-flow: 270 2% 80%;
+    --warm-badge: 227 40% 96%;
 
-    /* Sidebar */
-    --sidebar-background: 252 30% 98%;
-    --sidebar-foreground: 240 10% 20%;
-    --sidebar-primary: 252 85% 55%;
+    /* Sidebar - using neutral palette */
+    --sidebar-background: 0 9% 97%;
+    --sidebar-foreground: 180 1% 25%;
+    --sidebar-primary: 227 56% 61%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 252 20% 94%;
-    --sidebar-accent-foreground: 252 40% 30%;
-    --sidebar-border: 240 10% 90%;
-    --sidebar-ring: 252 85% 55%;
+    --sidebar-accent: 270 2% 92%;
+    --sidebar-accent-foreground: 180 1% 35%;
+    --sidebar-border: 270 2% 87%;
+    --sidebar-ring: 227 56% 61%;
   }
 
   .dark {
-    /* Dark mode - Deep tech indigo palette */
-    --background: 240 20% 3%;
-    --foreground: 210 40% 98%;
+    /* Dark mode - Neutral Professional Palette */
+    --background: 220 15% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 240 15% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 12% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 240 15% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 12% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    /* Primary - Electric indigo */
-    --primary: 252 100% 65%;
-    --primary-foreground: 240 20% 3%;
+    /* Indigo Light - Primary actions */
+    --primary: 227 60% 65%;
+    --primary-foreground: 220 15% 8%;
 
-    /* Secondary - Subtle purple glass */
-    --secondary: 252 30% 15%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 10% 18%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 240 15% 12%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 220 10% 15%;
+    --muted-foreground: 180 1% 55%;
 
-    /* Accent - Vibrant cyan for highlights */
-    --accent: 180 100% 50%;
-    --accent-foreground: 240 20% 3%;
+    /* Accent */
+    --accent: 227 50% 55%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 252 20% 18%;
-    --input: 252 20% 18%;
-    --ring: 252 100% 65%;
+    --border: 220 10% 20%;
+    --input: 220 10% 20%;
+    --ring: 227 60% 65%;
 
-    /* Custom Snipinal tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(252, 100%, 65%) 0%, hsl(280, 100%, 60%) 50%, hsl(330, 100%, 65%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(252, 60%, 12%) 0%, hsl(240, 20%, 3%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(252, 30%, 12%) 0%, hsl(252, 20%, 8%) 100%);
-    --gradient-accent: linear-gradient(90deg, hsl(180, 100%, 50%) 0%, hsl(252, 100%, 65%) 100%);
+    /* Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(227, 60%, 65%) 0%, hsl(227, 55%, 55%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(220, 15%, 12%) 0%, hsl(220, 15%, 8%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(220, 12%, 14%) 0%, hsl(220, 12%, 10%) 100%);
+    --gradient-accent: linear-gradient(90deg, hsl(227, 60%, 65%) 0%, hsl(227, 55%, 55%) 100%);
     
-    --glow-primary: 0 0 60px hsl(252, 100%, 65%, 0.4);
-    --glow-accent: 0 0 40px hsl(180, 100%, 50%, 0.3);
+    --glow-primary: 0 0 40px hsl(227, 60%, 65%, 0.25);
+    --glow-accent: 0 0 30px hsl(227, 55%, 55%, 0.2);
     
-    --glass-bg: hsl(252, 30%, 10%, 0.6);
-    --glass-border: hsl(252, 40%, 30%, 0.3);
+    --glass-bg: hsl(220, 12%, 12%, 0.8);
+    --glass-border: hsl(220, 10%, 25%, 0.5);
 
     /* Platform brand colors */
     --amazon-orange: 33 100% 50%;
     --ebay-blue: 211 100% 50%;
-    --success: 142 76% 45%;
+    --success: 142 60% 50%;
 
-    /* Warm trustworthy palette for landing (dark mode) */
-    --warm-bg: 30 15% 8%;
-    --warm-glow: 30 40% 20%;
-    --warm-accent: 30 65% 55%;
-    --warm-accent-soft: 30 30% 15%;
-    --warm-text: 35 20% 95%;
-    --warm-text-muted: 30 10% 60%;
-    --warm-border: 30 15% 20%;
-    --warm-cta: 35 20% 95%;
-    --warm-cta-hover: 35 15% 85%;
-    --warm-cta-text: 30 15% 8%;
+    /* Text variants */
+    --text-secondary: 12 6% 60%;
+    --text-muted: 180 1% 55%;
+
+    /* Landing page tokens (dark mode) */
+    --warm-bg: 220 15% 10%;
+    --warm-glow: 227 50% 25%;
+    --warm-accent: 227 60% 65%;
+    --warm-accent-soft: 227 40% 20%;
+    --warm-text: 0 0% 95%;
+    --warm-text-muted: 180 1% 60%;
+    --warm-border: 220 10% 20%;
+    --warm-cta: 227 60% 65%;
+    --warm-cta-hover: 227 60% 70%;
+    --warm-cta-text: 220 15% 8%;
     --warm-star: 45 85% 55%;
-    --warm-trust: 145 50% 55%;
-    --warm-chrome: 210 20% 65%;
-    --warm-tab-bg: 30 15% 12%;
-    --warm-card: 30 15% 10%;
-    --warm-flow: 30 30% 35%;
-    --warm-badge: 30 20% 12%;
+    --warm-trust: 142 55% 55%;
+    --warm-chrome: 180 1% 60%;
+    --warm-tab-bg: 220 12% 14%;
+    --warm-card: 220 12% 12%;
+    --warm-flow: 220 10% 35%;
+    --warm-badge: 227 40% 18%;
 
     /* Sidebar */
-    --sidebar-background: 240 15% 6%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 252 100% 65%;
-    --sidebar-primary-foreground: 240 20% 3%;
-    --sidebar-accent: 252 30% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 252 20% 15%;
-    --sidebar-ring: 252 100% 65%;
+    --sidebar-background: 220 12% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 227 60% 65%;
+    --sidebar-primary-foreground: 220 15% 8%;
+    --sidebar-accent: 220 10% 18%;
+    --sidebar-accent-foreground: 0 0% 85%;
+    --sidebar-border: 220 10% 20%;
+    --sidebar-ring: 227 60% 65%;
   }
 }
 

@@ -115,7 +115,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen mesh-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -125,7 +125,7 @@ export default function Auth() {
         {/* Logo */}
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">S</span>
             </div>
             <span className="text-2xl font-display font-bold text-foreground">Snipinal</span>
@@ -133,7 +133,7 @@ export default function Auth() {
         </div>
 
         {/* Auth Card */}
-        <div className="glass-card p-8">
+        <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-display font-bold text-foreground mb-2">
               {getTitle()}
