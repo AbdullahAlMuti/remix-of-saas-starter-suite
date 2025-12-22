@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-        display: ['Outfit', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -61,17 +61,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Platform brand colors
         amazon: "hsl(var(--amazon-orange))",
         ebay: "hsl(var(--ebay-blue))",
         success: "hsl(var(--success))",
-        /* Named palette colors for direct use */
-        "heaven": "hsl(0, 0%, 100%)",
-        "cascading": "hsl(0, 9%, 97%)",
-        "steam": "hsl(270, 2%, 87%)",
-        "ice": "hsl(12, 6%, 74%)",
-        "indigo-light": "hsl(227, 56%, 61%)",
-        "sandpiper": "hsl(180, 1%, 45%)",
-        /* Warm/Landing page tokens */
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
+        // Text hierarchy
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
+        "text-muted": "hsl(var(--text-muted))",
+        // Warm/Landing page tokens
         "warm-glow": "hsl(var(--warm-glow))",
         "warm-accent": "hsl(var(--warm-accent))",
         "warm-text": "hsl(var(--warm-text))",
@@ -87,18 +87,22 @@ export default {
         "warm-card": "hsl(var(--warm-card))",
         "warm-flow": "hsl(var(--warm-flow))",
         "warm-badge": "hsl(var(--warm-badge))",
-        /* Soft platform colors */
-        "amazon-soft": "hsl(33, 60%, 95%)",
-        "amazon-text": "hsl(33, 80%, 40%)",
-        "ebay-soft": "hsl(211, 60%, 95%)",
-        "ebay-text": "hsl(211, 80%, 45%)",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "xl": "0.875rem",
         "2xl": "1rem",
         "3xl": "1.5rem",
+      },
+      fontSize: {
+        "2xs": ["0.625rem", { lineHeight: "0.875rem" }],
+      },
+      spacing: {
+        "18": "4.5rem",
+        "88": "22rem",
+        "128": "32rem",
       },
       keyframes: {
         "accordion-down": {
@@ -109,20 +113,48 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(10px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-in-right": {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        "pulse-soft": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
+        },
       },
       animation: {
-        "accordion-down": "accordion-down 0.15s ease-out",
-        "accordion-up": "accordion-up 0.15s ease-out",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
+        "fade-up": "fade-up 0.4s ease-out",
+        "slide-in-right": "slide-in-right 0.3s ease-out",
+        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "hero-warm": "linear-gradient(180deg, hsl(var(--warm-bg)) 0%, hsl(var(--background)) 100%)",
+        "hero-gradient": "var(--gradient-hero)",
+        "card-gradient": "var(--gradient-card)",
+        "cta-gradient": "var(--gradient-cta)",
       },
       boxShadow: {
-        "warm-cta": "0 4px 14px hsl(var(--warm-cta) / 0.25)",
-        "warm-card": "0 4px 20px hsl(var(--warm-border) / 0.5)",
-        "warm-brand": "0 8px 24px hsl(var(--warm-accent) / 0.3)",
+        "soft-sm": "var(--shadow-sm)",
+        "soft-md": "var(--shadow-md)",
+        "soft-lg": "var(--shadow-lg)",
+        "soft-xl": "var(--shadow-xl)",
+        "glow-primary": "var(--glow-primary)",
+        "glow-accent": "var(--glow-accent)",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.19, 1, 0.22, 1)",
       },
     },
   },
