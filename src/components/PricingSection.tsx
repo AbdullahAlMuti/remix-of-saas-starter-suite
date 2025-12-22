@@ -44,7 +44,7 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
   const { createCheckout, planName: currentPlanName } = useSubscription();
   const { plans, isLoading: plansLoading } = usePlans();
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-50px" });
+  const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   
   const [checkoutDialogOpen, setCheckoutDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -129,7 +129,7 @@ const PricingSection = forwardRef<HTMLElement>((_, ref) => {
           )}
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate="visible"
         >
           {plans.map((plan) => {
             const Icon = planIcons[plan.name] || Zap;
