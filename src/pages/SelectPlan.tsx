@@ -143,11 +143,10 @@ export default function SelectPlan() {
       return;
     }
 
-    // User is logged in - handle free plan vs paid plan
-    if (!plan.stripe_price_id_monthly || plan.price_monthly === 0) {
-      // Free plan - just redirect to dashboard
-      toast.success(`You're on the ${plan.display_name} plan!`);
-      navigate('/dashboard', { replace: true });
+    // User is logged in - proceed to checkout if plan has a Stripe price
+    if (!plan.stripe_price_id_monthly) {
+      // No Stripe price - shouldn't happen but handle gracefully
+      toast.error('This plan is not available for checkout');
       return;
     }
 
