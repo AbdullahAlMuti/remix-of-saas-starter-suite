@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/useAuth';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import SellerSuitLogo from '@/components/SellerSuitLogo';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -100,11 +101,8 @@ export default function AdminLogin() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">S</span>
-            </div>
-            <span className="text-2xl font-display font-bold text-foreground">Snipinal</span>
+          <a href="/" className="inline-flex items-center justify-center">
+            <SellerSuitLogo size="lg" showText={true} />
           </a>
         </div>
 

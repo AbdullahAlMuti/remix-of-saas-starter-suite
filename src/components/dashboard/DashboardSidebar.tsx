@@ -28,6 +28,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import SellerSuitLogo from '@/components/SellerSuitLogo';
 
 interface NavItem {
   icon: React.ElementType;
@@ -86,10 +87,7 @@ export function DashboardSidebar() {
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
         {!isCollapsed && (
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">S</span>
-            </div>
-            <span className="text-lg font-display font-bold text-sidebar-foreground">Snipinal</span>
+            <SellerSuitLogo size="sm" showText={true} />
           </Link>
         )}
         <Button
