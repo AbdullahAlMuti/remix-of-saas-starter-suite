@@ -22,6 +22,7 @@ const Navbar = () => {
   const navLinks = [
     { label: "Features", href: "#features" },
     { label: "How It Works", href: "#workflow" },
+    { label: "Course", href: "/course", isRoute: true },
     { label: "Pricing", href: "#pricing" },
     { label: "Testimonials", href: "#testimonials" },
   ];
@@ -69,13 +70,23 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
+              link.isRoute ? (
+                <button
+                  key={link.label}
+                  onClick={() => navigate(link.href)}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
 
@@ -116,14 +127,27 @@ const Navbar = () => {
           <div className="md:hidden mt-4 pb-4 border-t border-border pt-4 animate-fade-in">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </a>
+                link.isRoute ? (
+                  <button
+                    key={link.label}
+                    onClick={() => {
+                      navigate(link.href);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                )
               ))}
               <div className="flex items-center gap-4 mt-4">
                 <ThemeToggle />

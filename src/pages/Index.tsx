@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
 import WorkflowSection from "@/components/WorkflowSection";
-import CourseSection from "@/components/CourseSection";
 import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
@@ -18,9 +17,6 @@ const Index = () => {
       </section>
       <section id="workflow">
         <WorkflowSection />
-      </section>
-      <section id="course">
-        <CourseSection />
       </section>
       <section id="pricing">
         <PricingSection />
