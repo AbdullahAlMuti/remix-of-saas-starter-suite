@@ -123,7 +123,7 @@ export type Database = {
           status?: string | null
           total_cost?: number | null
           updated_at?: string | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           amazon_asin?: string | null
