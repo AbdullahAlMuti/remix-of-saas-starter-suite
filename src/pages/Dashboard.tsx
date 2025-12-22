@@ -12,12 +12,11 @@ import {
   Clock,
   ArrowUpRight,
   ArrowRight,
-  Zap,
   Shield,
-  RefreshCw,
+  LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription, PLANS } from '@/hooks/useSubscription';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/dashboard/StatsCard';
@@ -37,7 +36,7 @@ interface DashboardStats {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile, user } = useAuth();
-  const { planName, subscribed, currentPlan, checkSubscription } = useSubscription();
+  const { planName, subscribed, currentPlan } = useSubscription();
   
   const [stats, setStats] = useState<DashboardStats>({
     activeListings: 0,
@@ -65,7 +64,7 @@ export default function Dashboard() {
     if (user) {
       fetchDashboardData();
     }
-  }, [user, profile?.credits]);
+  }, [user, profile?.credits, getPlanCredits]);
 
   const fetchDashboardData = async () => {
     if (!user) return;
@@ -332,7 +331,7 @@ function QuickAction({
   label, 
   badge 
 }: { 
-  icon: any; 
+  icon: LucideIcon; 
   label: string; 
   badge?: number;
 }) {
