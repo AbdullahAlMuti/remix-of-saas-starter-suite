@@ -174,11 +174,35 @@ const HeroSection = () => {
 
           {/* Animated Workflow Demo - No Card */}
           <motion.div 
-            className="relative max-w-3xl mx-auto mb-16 py-8"
+            className="relative max-w-3xl mx-auto mb-16 py-12"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
+            {/* Decorative gradient background */}
+            <div className="absolute inset-0 -inset-x-8 md:-inset-x-16 rounded-3xl overflow-hidden pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/8 to-primary/5" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/3 to-transparent" />
+              {/* Subtle dot pattern */}
+              <div 
+                className="absolute inset-0 opacity-30"
+                style={{
+                  backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.15) 1px, transparent 0)`,
+                  backgroundSize: '24px 24px'
+                }}
+              />
+              {/* Glowing orbs */}
+              <motion.div 
+                className="absolute top-1/2 left-1/4 w-32 h-32 rounded-full bg-primary/10 blur-2xl"
+                animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.9, 1.1, 0.9] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="absolute top-1/2 right-1/4 w-32 h-32 rounded-full bg-accent/10 blur-2xl"
+                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1.1, 0.9, 1.1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </div>
             {/* Workflow Steps */}
             <div className="relative flex items-start justify-center gap-0">
               {workflowSteps.map((step, index) => (
