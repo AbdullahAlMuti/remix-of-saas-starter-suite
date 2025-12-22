@@ -32,6 +32,7 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminRoles from "./pages/admin/AdminRoles";
 import AdminPrompts from "./pages/admin/AdminPrompts";
 import NotFound from "./pages/NotFound";
+import Course from "./pages/Course";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/course" element={<Course />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/register" element={<Register />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
