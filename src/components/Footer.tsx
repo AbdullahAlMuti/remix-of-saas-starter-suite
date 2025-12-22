@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { Zap } from "lucide-react";
+import SellerSuitLogo from "@/components/SellerSuitLogo";
 
 const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
@@ -36,11 +36,8 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-purple-500 to-pink-500 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-display text-xl font-bold">Snipinal</span>
+            <div className="mb-4">
+              <SellerSuitLogo size="sm" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional dropshipping automation from Amazon to eBay.
@@ -104,7 +101,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Snipinal. All rights reserved.
+            © {currentYear} SellerSuit. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">Made with ❤️ for dropshippers</span>

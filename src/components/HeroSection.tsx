@@ -14,7 +14,7 @@ const featureTabs = [
 
 const workflowSteps = [
   { label: "Find Product", sublabel: "Amazon" },
-  { label: "AI Optimize", sublabel: "Snipinal" },
+  { label: "AI Optimize", sublabel: "SellerSuit" },
   { label: "List & Sell", sublabel: "eBay" },
 ];
 
@@ -40,8 +40,10 @@ const EbayLogo = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Snipinal Logo
-const SnipinalLogo = ({ className, active }: { className?: string; active?: boolean }) => (
+// SellerSuit Logo
+import SellerSuitLogo from "@/components/SellerSuitLogo";
+
+const SellerSuitIcon = ({ className, active }: { className?: string; active?: boolean }) => (
   <div className={cn("flex items-center justify-center", className)}>
     <Zap className={cn("w-8 h-8 md:w-10 md:h-10", active ? "text-primary-foreground" : "text-primary")} />
   </div>
@@ -144,7 +146,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Snipinal is the all-in-one Chrome extension that automates product sourcing, 
+            SellerSuit is the all-in-one Chrome extension that automates product sourcing, 
             intelligent listings, and order fulfillment — so you can focus on growing.
           </motion.p>
 
