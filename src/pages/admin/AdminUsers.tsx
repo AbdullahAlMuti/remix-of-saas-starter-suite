@@ -15,6 +15,7 @@ import {
   Key,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,13 @@ interface UserRole {
   role: 'user' | 'admin' | 'super_admin';
 }
 
+interface Plan {
+  id: string;
+  name: string;
+  display_name: string;
+  credits_per_month: number | null;
+}
+
 const ITEMS_PER_PAGE = 10;
 
 export default function AdminUsers() {
@@ -78,8 +86,11 @@ export default function AdminUsers() {
   const [selectedUser, setSelectedUser] = useState<UserWithDetails | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [newRole, setNewRole] = useState<string>('user');
-
+  const [newPlanId, setNewPlanId] = useState<string>('');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
   const fetchUsersCallback = useCallback(() => {
     fetchUsers();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,8 +107,23 @@ export default function AdminUsers() {
 
   useEffect(() => {
     fetchUsers();
+    fetchPlans();
   }, [currentPage, filterActive, filterRole]);
 
+  const fetchPlans = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('plans')
+        .select('id, name, display_name, credits_per_month')
+        .eq('is_active', true)
+        .order('price_monthly', { ascending: true });
+
+      if (error) throw error;
+      setPlans(data || []);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+    }
+  };
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
@@ -245,6 +271,78 @@ export default function AdminUsers() {
     } catch (error) {
       console.error('Error updating credits:', error);
       toast.error('Failed to update credits');
+    }
+  };
+
+  const updateUserPlan = async () => {
+    if (!selectedUser || !newPlanId) return;
+
+    setIsUpdatingPlan(true);
+    try {
+      // Validate plan exists
+      const selectedPlan = plans.find(p => p.id === newPlanId);
+      if (!selectedPlan) {
+        toast.error('Invalid plan selected.');
+        return;
+      }
+
+      // Update profile with new plan
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          plan_id: newPlanId,
+          credits: selectedPlan.credits_per_month || 5
+        })
+        .eq('id', selectedUser.id);
+
+      if (profileError) throw profileError;
+
+      // Update or create user_plans record
+      const { data: existingUserPlan } = await supabase
+        .from('user_plans')
+        .select('id')
+        .eq('user_id', selectedUser.id)
+        .maybeSingle();
+
+      if (existingUserPlan) {
+        await supabase
+          .from('user_plans')
+          .update({ 
+            plan_id: newPlanId,
+            status: 'active',
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          })
+          .eq('id', existingUserPlan.id);
+      } else {
+        await supabase
+          .from('user_plans')
+          .insert({
+            user_id: selectedUser.id,
+            plan_id: newPlanId,
+            status: 'active',
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          });
+      }
+
+      // Log audit
+      await supabase.from('audit_logs').insert({
+        action: 'PLAN_CHANGED',
+        entity_type: 'user',
+        entity_id: selectedUser.id,
+        old_values: { plan_id: selectedUser.plan_id },
+        new_values: { plan_id: newPlanId, plan_name: selectedPlan.name },
+      });
+
+      setShowPlanDialog(false);
+      fetchUsers();
+      toast.success(`Plan updated to ${selectedPlan.display_name}. User has been notified.`);
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      toast.error('Failed to update plan');
+    } finally {
+      setIsUpdatingPlan(false);
     }
   };
 
@@ -469,6 +567,14 @@ export default function AdminUsers() {
                                 <Shield className="h-4 w-4 mr-2" />
                                 Change Role
                               </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => {
+                                setSelectedUser(user);
+                                setNewPlanId(user.plan_id || '');
+                                setShowPlanDialog(true);
+                              }}>
+                                <CreditCard className="h-4 w-4 mr-2" />
+                                Change Plan
+                              </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem>
                                 <Key className="h-4 w-4 mr-2" />
@@ -607,6 +713,14 @@ export default function AdminUsers() {
                   <Shield className="h-4 w-4 mr-2" />
                   Change Role
                 </Button>
+                <Button variant="outline" size="sm" onClick={() => {
+                  setShowDetailsDialog(false);
+                  setNewPlanId(selectedUser.plan_id || '');
+                  setShowPlanDialog(true);
+                }}>
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Change Plan
+                </Button>
                 <Button variant="outline" size="sm">
                   <Mail className="h-4 w-4 mr-2" />
                   Send Email
@@ -614,6 +728,53 @@ export default function AdminUsers() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Plan Dialog */}
+      <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change User Plan</DialogTitle>
+            <DialogDescription>
+              Update the subscription plan for {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Plan</Label>
+              <Select value={newPlanId} onValueChange={setNewPlanId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {plans.map(plan => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {plan.display_name} ({plan.credits_per_month || 0} credits/month)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This will update the user's plan and reset their credits to the plan's monthly allowance.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPlanDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={updateUserPlan} disabled={isUpdatingPlan || !newPlanId}>
+              {isUpdatingPlan ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update Plan'
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

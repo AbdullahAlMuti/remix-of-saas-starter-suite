@@ -83,7 +83,7 @@ interface ListingStats {
 }
 
 export default function Listings() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
   const [stats, setStats] = useState<ListingStats>({
@@ -99,6 +99,8 @@ export default function Listings() {
   const [showNewListingDialog, setShowNewListingDialog] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+
+  const userCredits = profile?.credits || 0;
 
   // New listing form state
   const [newListing, setNewListing] = useState({
@@ -240,6 +242,16 @@ export default function Listings() {
 
   const handleCreateListing = async () => {
     if (!user) return;
+
+    // Check credits first
+    if (userCredits < 1) {
+      toast({
+        title: "Insufficient Credits",
+        description: "You need more credits to create a listing. Please recharge your credits.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (!newListing.title || !newListing.amazon_asin) {
       toast({
@@ -393,7 +405,12 @@ export default function Listings() {
 
           <Dialog open={showNewListingDialog} onOpenChange={setShowNewListingDialog}>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-primary hover:bg-primary/90">
+              <Button 
+                size="sm" 
+                className="bg-primary hover:bg-primary/90"
+                disabled={userCredits < 1}
+                title={userCredits < 1 ? "You need credits to create listings" : undefined}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 New Listing
               </Button>
@@ -402,7 +419,7 @@ export default function Listings() {
               <DialogHeader>
                 <DialogTitle>Create New Listing</DialogTitle>
                 <DialogDescription>
-                  Add a new product mapping between Amazon and eBay.
+                  Add a new product mapping between Amazon and eBay. (1 credit required)
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
