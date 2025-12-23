@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Shield,
   LucideIcon,
+  Gem,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -335,6 +337,21 @@ export default function Dashboard() {
             creditsMax={stats.creditsMax} 
           />
 
+          {/* Advanced Tools */}
+          <div className="bg-card border border-border rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-sm font-medium text-foreground">Advanced Tools</h3>
+              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+            <div className="space-y-2">
+              <AdvancedTool icon={Gem} label="Bulk Scanner" />
+              <AdvancedTool icon={Gem} label="500 Best Selling Items on eBay" />
+              <AdvancedTool icon={Gem} label="Ali Growth Scanner" />
+              <AdvancedTool icon={Gem} label="Turbo Scanner" limit="10 scans/month" />
+              <AdvancedTool icon={Gem} label="Autopilot" limit="10 scans/month" />
+            </div>
+          </div>
+
           {/* Quick Actions */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="text-sm font-medium text-foreground mb-4">Quick Actions</h3>
@@ -374,6 +391,31 @@ function QuickAction({
       {badge && (
         <span className="px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-medium">
           {badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
+// Advanced Tool Item
+function AdvancedTool({ 
+  icon: Icon, 
+  label, 
+  limit 
+}: { 
+  icon: LucideIcon; 
+  label: string; 
+  limit?: string;
+}) {
+  return (
+    <button className="w-full flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors text-left group">
+      <div className="flex items-center gap-3">
+        <Icon className="h-4 w-4 text-primary" />
+        <span className="text-sm text-foreground">{label}</span>
+      </div>
+      {limit && (
+        <span className="text-xs text-primary font-medium">
+          {limit}
         </span>
       )}
     </button>
