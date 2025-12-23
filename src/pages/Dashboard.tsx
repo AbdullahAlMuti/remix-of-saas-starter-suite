@@ -169,8 +169,28 @@ export default function Dashboard() {
     });
   }, []);
 
+  const insufficientCredits = stats.creditsRemaining < 1;
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      {/* Insufficient Credits Warning */}
+      {insufficientCredits && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-destructive">
+              You need more credits to create a listing.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Please recharge your credits or upgrade your plan to continue creating listings.
+            </p>
+          </div>
+          <Button size="sm" variant="destructive" onClick={() => navigate('/dashboard/subscription')}>
+            Upgrade Plan
+          </Button>
+        </div>
+      )}
+
       {/* Clean Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
