@@ -3,6 +3,15 @@
 // Replicate API token - stored securely in chrome.storage.local
 // Configurable via Admin Panel
 
+const HOMEPAGE_URL = "https://sellersuit.lovable.app";
+
+// Open homepage when extension is installed
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    console.log('[SellerSuit] Extension installed, opening homepage');
+    chrome.tabs.create({ url: HOMEPAGE_URL });
+  }
+});
 
 // Default Google Sheet URL (fallback if not in storage)
 const DEFAULT_SHEET_URL = "https://script.google.com/macros/s/AKfycbwU_ER6RWnY0koDjq7zs__LTdkMCF07nP8wvTe_05qZ5pcbDlpTu0VBlPZ3sI-sqIV5/exec";
