@@ -61,10 +61,20 @@ const adminNavItems: NavItem[] = [
   { icon: Shield, label: 'Settings', href: '/admin/settings', adminOnly: true },
 ];
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  onCollapseChange?: (collapsed: boolean) => void;
+}
+
+export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { profile, isAdmin, signOut } = useAuth();
   const location = useLocation();
+
+  // Notify parent when collapse state changes
+  const handleCollapse = (collapsed: boolean) => {
+    setIsCollapsed(collapsed);
+    onCollapseChange?.(collapsed);
+  };
 
   // Determine if we're in the admin section
   const isAdminSection = location.pathname.startsWith('/admin');
@@ -77,11 +87,12 @@ export function DashboardSidebar() {
   };
 
   return (
-    <motion.aside
-      initial={false}
-      animate={{ width: isCollapsed ? 80 : 280 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50"
+    <aside
+      data-collapsed={isCollapsed}
+      className={cn(
+        "h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50 transition-[width] duration-300 ease-in-out",
+        isCollapsed ? "w-20" : "w-[280px]"
+      )}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
@@ -93,7 +104,7 @@ export function DashboardSidebar() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={() => handleCollapse(!isCollapsed)}
           className="text-sidebar-foreground hover:bg-sidebar-accent"
         >
           {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -232,6 +243,6 @@ export function DashboardSidebar() {
           </button>
         </div>
       </div>
-    </motion.aside>
+    </aside>
   );
 }
