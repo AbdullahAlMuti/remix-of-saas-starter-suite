@@ -349,8 +349,19 @@ export default function Orders() {
                         +${order.profit?.toFixed(2) || "0.00"}
                       </span>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {order.amazon_order_id || "Pending"}
+                    <TableCell>
+                      {order.amazon_order_id ? (
+                        <a
+                          href={`https://www.amazon.com/your-orders/search/ref=ppx_yo2ov_dt_b_search?opt=ab&search=${order.amazon_order_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary font-mono hover:underline cursor-pointer"
+                        >
+                          {order.amazon_order_id}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">Pending</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       {formatAddress(order.buyer_address, order.buyer_name) || (
