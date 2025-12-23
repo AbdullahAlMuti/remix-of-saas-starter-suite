@@ -26,6 +26,7 @@ import CalculatorSettings from "./pages/dashboard/CalculatorSettings";
 import BlogGenerator from "./pages/dashboard/BlogGenerator";
 import BlogPosts from "./pages/dashboard/BlogPosts";
 import BestSellingItems from "./pages/dashboard/BestSellingItems";
+import MustSellItems from "./pages/dashboard/MustSellItems";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -37,6 +38,7 @@ import AdminRoles from "./pages/admin/AdminRoles";
 import AdminPrompts from "./pages/admin/AdminPrompts";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminBestSelling from "./pages/admin/AdminBestSelling";
+import AdminMustSell from "./pages/admin/AdminMustSell";
 import NotFound from "./pages/NotFound";
 import Course from "./pages/Course";
 
@@ -78,6 +80,7 @@ const App = () => (
                 <Route path="blog-generator" element={<BlogGenerator />} />
                 <Route path="blog-posts" element={<BlogPosts />} />
                 <Route path="best-selling" element={<BestSellingItems />} />
+                <Route path="must-sell" element={<MustSellItems />} />
                 <Route path="settings" element={<DashboardSettings />} />
               </Route>
 
@@ -96,6 +99,7 @@ const App = () => (
                 <Route path="prompts" element={<AdminPrompts />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="best-selling" element={<AdminBestSelling />} />
+                <Route path="must-sell" element={<AdminMustSell />} />
                 <Route path="audit" element={<AdminAudit />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>

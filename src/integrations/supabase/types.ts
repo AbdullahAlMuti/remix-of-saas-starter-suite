@@ -728,6 +728,57 @@ export type Database = {
         }
         Relationships: []
       }
+      must_sell_items: {
+        Row: {
+          category: string | null
+          country: string
+          created_at: string
+          created_by: string | null
+          ebay_url: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price: number
+          profit: number
+          sales_count: number
+          title: string
+          total_sold: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          ebay_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price?: number
+          profit?: number
+          sales_count?: number
+          title: string
+          total_sold?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          ebay_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price?: number
+          profit?: number
+          sales_count?: number
+          title?: string
+          total_sold?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notices: {
         Row: {
           content: string
