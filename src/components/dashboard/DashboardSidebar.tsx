@@ -4,11 +4,9 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Bell,
   Settings,
   Shield,
   LogOut,
-  ChevronLeft,
   ChevronRight,
   Sparkles,
   FileText,
@@ -23,45 +21,75 @@ import {
   Puzzle,
   Calculator,
   PenTool,
+  TrendingUp,
+  Search,
+  Target,
+  Compass,
+  FolderSearch,
+  Type,
+  Wrench,
+  Eye,
+  BookOpen,
+  Layers,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/hooks/useTheme';
 import SellerSuitLogo from '@/components/SellerSuitLogo';
 
 interface NavItem {
   icon: React.ElementType;
   label: string;
   href: string;
-  adminOnly?: boolean;
+  hasSubmenu?: boolean;
 }
 
-const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
-  { icon: Package, label: 'Listings', href: '/dashboard/listings' },
-  { icon: ShoppingCart, label: 'Auto Orders', href: '/dashboard/orders' },
-  { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
-  { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
-  { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
-  { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator' },
-  { icon: FileText, label: 'Blog Posts', href: '/dashboard/blog-posts' },
-  { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
-  { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
-  { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+// Main navigation items matching the reference design
+const researchItems: NavItem[] = [
+  { icon: TrendingUp, label: 'Market Insights', href: '/dashboard' },
+  { icon: Search, label: 'Product Research', href: '/dashboard/listings' },
+  { icon: Target, label: 'Competitor Research', href: '/dashboard/orders' },
+  { icon: Compass, label: 'Product Explorer', href: '/dashboard/alerts' },
+  { icon: FolderSearch, label: 'Category Research', href: '/dashboard/best-selling' },
+];
+
+const toolsItems: NavItem[] = [
+  { icon: Type, label: 'Title Builder', href: '/dashboard/prompts' },
+  { icon: Wrench, label: 'Advanced Tools', href: '/dashboard/blog-generator', hasSubmenu: true },
+];
+
+const myItemsItems: NavItem[] = [
+  { icon: Eye, label: 'My Competitors', href: '/dashboard/competitors' },
+  { icon: Package, label: 'My Products', href: '/dashboard/products' },
+  { icon: BookOpen, label: 'Tutorials & Training', href: '/dashboard/tutorials', hasSubmenu: true },
+];
+
+const utilityItems: NavItem[] = [
+  { icon: Calculator, label: 'eBay Fee Calculator', href: '/dashboard/calculator' },
+  { icon: Settings, label: 'Quick Settings', href: '/dashboard/settings' },
+  { icon: Layers, label: 'Bulk Listing Optimization', href: '/dashboard/blog-posts' },
+  { icon: Shield, label: 'Management Panel', href: '/dashboard/extension', hasSubmenu: true },
 ];
 
 const adminNavItems: NavItem[] = [
-  { icon: BarChart3, label: 'Dashboard', href: '/admin', adminOnly: true },
-  { icon: Users, label: 'Users', href: '/admin/users', adminOnly: true },
-  { icon: CreditCard, label: 'Plans', href: '/admin/plans', adminOnly: true },
-  { icon: DollarSign, label: 'Payments', href: '/admin/payments', adminOnly: true },
-  { icon: ShieldCheck, label: 'Roles', href: '/admin/roles', adminOnly: true },
-  { icon: Megaphone, label: 'Notices', href: '/admin/notices', adminOnly: true },
-  { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts', adminOnly: true },
-  { icon: ShoppingCart, label: 'Best Selling Items', href: '/admin/best-selling', adminOnly: true },
-  { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit', adminOnly: true },
-  { icon: Shield, label: 'Settings', href: '/admin/settings', adminOnly: true },
+  { icon: BarChart3, label: 'Dashboard', href: '/admin' },
+  { icon: Users, label: 'Users', href: '/admin/users' },
+  { icon: CreditCard, label: 'Plans', href: '/admin/plans' },
+  { icon: DollarSign, label: 'Payments', href: '/admin/payments' },
+  { icon: ShieldCheck, label: 'Roles', href: '/admin/roles' },
+  { icon: Megaphone, label: 'Notices', href: '/admin/notices' },
+  { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts' },
+  { icon: ShoppingCart, label: 'Best Selling Items', href: '/admin/best-selling' },
+  { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit' },
+  { icon: Shield, label: 'Settings', href: '/admin/settings' },
 ];
 
 interface DashboardSidebarProps {
@@ -72,14 +100,13 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { profile, isAdmin, signOut } = useAuth();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
 
-  // Notify parent when collapse state changes
   const handleCollapse = (collapsed: boolean) => {
     setIsCollapsed(collapsed);
     onCollapseChange?.(collapsed);
   };
 
-  // Determine if we're in the admin section
   const isAdminSection = location.pathname.startsWith('/admin');
 
   const isActive = (href: string) => {
@@ -89,162 +116,173 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
     return location.pathname.startsWith(href);
   };
 
+  const NavItemComponent = ({ item }: { item: NavItem }) => {
+    const Icon = item.icon;
+    const active = isActive(item.href);
+    
+    return (
+      <Link
+        to={item.href}
+        className={cn(
+          'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group',
+          active
+            ? 'bg-primary/10 text-primary border border-primary/20'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
+        )}
+      >
+        <div className={cn(
+          'w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
+          active ? 'bg-primary text-primary-foreground' : 'bg-sidebar-accent/50 text-sidebar-foreground group-hover:bg-sidebar-accent'
+        )}>
+          <Icon className="h-4 w-4" />
+        </div>
+        {!isCollapsed && (
+          <>
+            <span className={cn('flex-1 text-sm font-medium', active && 'text-primary')}>
+              {item.label}
+            </span>
+            {item.hasSubmenu && (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
+          </>
+        )}
+      </Link>
+    );
+  };
+
   return (
     <aside
       data-collapsed={isCollapsed}
       className={cn(
-        "h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50",
-        isCollapsed ? "w-20" : "w-[280px]"
+        "h-screen bg-card border-r border-border flex flex-col fixed left-0 top-0 z-50 shadow-sm",
+        isCollapsed ? "w-20" : "w-[260px]"
       )}
     >
-      {/* Logo */}
-      <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
-        {!isCollapsed && (
-          <Link to="/" className="flex items-center gap-2">
+      {/* Logo Header */}
+      <div className="p-4 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          {!isCollapsed ? (
             <SellerSuitLogo size="sm" showText={true} />
-          </Link>
-        )}
+          ) : (
+            <SellerSuitLogo size="sm" showText={false} />
+          )}
+        </Link>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => handleCollapse(!isCollapsed)}
-          className="text-sidebar-foreground hover:bg-sidebar-accent"
+          className="h-8 w-8 rounded-full hover:bg-sidebar-accent"
         >
-          {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          <ChevronRight className={cn("h-4 w-4 transition-transform", !isCollapsed && "rotate-180")} />
         </Button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {/* Show Admin Nav ONLY when in admin section */}
+      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto scrollbar-thin">
         {isAdminSection && isAdmin ? (
+          // Admin Navigation
           <div className="space-y-1">
-            {!isCollapsed && (
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
-                Admin
-              </p>
-            )}
-            {adminNavItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-                    active
-                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <Icon className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
-                </Link>
-              );
-            })}
+            {adminNavItems.map((item) => (
+              <NavItemComponent key={item.href} item={item} />
+            ))}
           </div>
         ) : (
-          /* Show Main Nav when in user dashboard */
+          // User Navigation - matching reference design
           <div className="space-y-1">
-            {!isCollapsed && (
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
-                Main
-              </p>
-            )}
-            {mainNavItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-                    active
-                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <Icon className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
-                </Link>
-              );
-            })}
+            {/* Research Section */}
+            {researchItems.map((item) => (
+              <NavItemComponent key={item.href} item={item} />
+            ))}
             
-            {/* Link to admin panel for admins */}
+            {/* Divider */}
+            <div className="py-2">
+              <div className="border-t border-border/50" />
+            </div>
+            
+            {/* Tools Section */}
+            {toolsItems.map((item) => (
+              <NavItemComponent key={item.href} item={item} />
+            ))}
+            
+            {/* Divider */}
+            <div className="py-2">
+              <div className="border-t border-border/50" />
+            </div>
+            
+            {/* My Items Section */}
+            {myItemsItems.map((item) => (
+              <NavItemComponent key={item.href} item={item} />
+            ))}
+            
+            {/* Divider */}
+            <div className="py-2">
+              <div className="border-t border-border/50" />
+            </div>
+            
+            {/* Utility Section */}
+            {utilityItems.map((item) => (
+              <NavItemComponent key={item.href} item={item} />
+            ))}
+            
+            {/* Admin Panel Link */}
             {isAdmin && (
-              <div className="pt-4 mt-4 border-t border-sidebar-border">
-                {!isCollapsed && (
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
-                    Admin
-                  </p>
-                )}
-                <Link
-                  to="/admin"
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-                    'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                  )}
-                >
-                  <Shield className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-                  {!isCollapsed && <span className="font-medium">Admin Panel</span>}
-                </Link>
-              </div>
+              <>
+                <div className="py-2">
+                  <div className="border-t border-border/50" />
+                </div>
+                <NavItemComponent 
+                  item={{ icon: Shield, label: 'Admin Panel', href: '/admin' }} 
+                />
+              </>
             )}
           </div>
         )}
       </nav>
 
-      {/* User Section */}
-      <div className="p-4 border-t border-sidebar-border">
-        {!isCollapsed && profile && (
-          <div className="flex items-center gap-3 mb-3 px-3 py-2 rounded-xl bg-sidebar-accent/50">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-              <span className="text-sm font-bold text-primary-foreground">
-                {profile.full_name?.charAt(0) || profile.email.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {profile.full_name || 'User'}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">{profile.email}</p>
-            </div>
+      {/* Footer - Logout & Theme */}
+      <div className="p-3 border-t border-border">
+        {/* Logout */}
+        <button
+          onClick={signOut}
+          className={cn(
+            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+            'text-sidebar-foreground hover:bg-sidebar-accent/50'
+          )}
+        >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-sidebar-accent/50">
+            <LogOut className="h-4 w-4" />
+          </div>
+          {!isCollapsed && <span className="text-sm font-medium">Log out</span>}
+        </button>
+
+        {/* Theme Toggle */}
+        {!isCollapsed && (
+          <div className="mt-3 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-sidebar-accent/30">
+            <button
+              onClick={() => setTheme('light')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                theme === 'light' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Sun className="h-4 w-4" />
+              Light
+            </button>
+            <button
+              onClick={() => setTheme('dark')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                theme === 'dark' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Moon className="h-4 w-4" />
+            </button>
           </div>
         )}
-        
-        <div className="space-y-1">
-          <div className={cn(
-            'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-            isCollapsed && 'justify-center'
-          )}>
-            <ThemeToggle />
-            {!isCollapsed && <span className="font-medium text-sidebar-foreground">Theme</span>}
-          </div>
-
-          <Link
-            to="/dashboard/settings"
-            className={cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-xl',
-              'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-            )}
-          >
-            <Settings className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-            {!isCollapsed && <span className="font-medium">Settings</span>}
-          </Link>
-          
-          <button
-            onClick={signOut}
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl',
-              'text-destructive hover:bg-destructive/10'
-            )}
-          >
-            <LogOut className={cn('h-5 w-5', isCollapsed && 'mx-auto')} />
-            {!isCollapsed && <span className="font-medium">Sign Out</span>}
-          </button>
-        </div>
       </div>
     </aside>
   );
