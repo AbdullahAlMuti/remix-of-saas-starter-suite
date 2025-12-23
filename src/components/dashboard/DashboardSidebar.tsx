@@ -21,18 +21,11 @@ import {
   Puzzle,
   Calculator,
   PenTool,
+  Bell,
   TrendingUp,
-  Search,
-  Target,
-  Compass,
-  FolderSearch,
-  Type,
-  Wrench,
-  Eye,
-  BookOpen,
-  Layers,
   Sun,
   Moon,
+  Flame,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -47,38 +40,28 @@ interface NavItem {
   hasSubmenu?: boolean;
 }
 
-interface NavGroup {
-  label: string;
-  items: NavItem[];
-}
-
-// Main navigation items matching the reference design
-const researchItems: NavItem[] = [
-  { icon: TrendingUp, label: 'Market Insights', href: '/dashboard' },
-  { icon: Search, label: 'Product Research', href: '/dashboard/listings' },
-  { icon: Target, label: 'Competitor Research', href: '/dashboard/orders' },
-  { icon: Compass, label: 'Product Explorer', href: '/dashboard/alerts' },
-  { icon: FolderSearch, label: 'Category Research', href: '/dashboard/best-selling' },
+// Original user navigation items with new design
+const mainNavItems: NavItem[] = [
+  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
+  { icon: Package, label: 'Listings', href: '/dashboard/listings' },
+  { icon: ShoppingCart, label: 'Auto Orders', href: '/dashboard/orders' },
+  { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
+  { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
+  { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
+  { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator' },
+  { icon: FileText, label: 'Blog Posts', href: '/dashboard/blog-posts' },
+  { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
+  { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
+  { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },
 ];
 
-const toolsItems: NavItem[] = [
-  { icon: Type, label: 'Title Builder', href: '/dashboard/prompts' },
-  { icon: Wrench, label: 'Advanced Tools', href: '/dashboard/blog-generator', hasSubmenu: true },
+// Advanced tools section
+const advancedToolsItems: NavItem[] = [
+  { icon: TrendingUp, label: '500 Best Selling Items', href: '/dashboard/best-selling' },
+  { icon: Flame, label: 'Must Sell Items', href: '/dashboard/must-sell' },
 ];
 
-const myItemsItems: NavItem[] = [
-  { icon: Eye, label: 'My Competitors', href: '/dashboard/competitors' },
-  { icon: Package, label: 'My Products', href: '/dashboard/products' },
-  { icon: BookOpen, label: 'Tutorials & Training', href: '/dashboard/tutorials', hasSubmenu: true },
-];
-
-const utilityItems: NavItem[] = [
-  { icon: Calculator, label: 'eBay Fee Calculator', href: '/dashboard/calculator' },
-  { icon: Settings, label: 'Quick Settings', href: '/dashboard/settings' },
-  { icon: Layers, label: 'Bulk Listing Optimization', href: '/dashboard/blog-posts' },
-  { icon: Shield, label: 'Management Panel', href: '/dashboard/extension', hasSubmenu: true },
-];
-
+// Admin navigation items
 const adminNavItems: NavItem[] = [
   { icon: BarChart3, label: 'Dashboard', href: '/admin' },
   { icon: Users, label: 'Users', href: '/admin/users' },
@@ -87,7 +70,8 @@ const adminNavItems: NavItem[] = [
   { icon: ShieldCheck, label: 'Roles', href: '/admin/roles' },
   { icon: Megaphone, label: 'Notices', href: '/admin/notices' },
   { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts' },
-  { icon: ShoppingCart, label: 'Best Selling Items', href: '/admin/best-selling' },
+  { icon: TrendingUp, label: 'Best Selling Items', href: '/admin/best-selling' },
+  { icon: Flame, label: 'Must Sell Items', href: '/admin/must-sell' },
   { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit' },
   { icon: Shield, label: 'Settings', href: '/admin/settings' },
 ];
@@ -187,10 +171,10 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
             ))}
           </div>
         ) : (
-          // User Navigation - matching reference design
+          // User Navigation
           <div className="space-y-1">
-            {/* Research Section */}
-            {researchItems.map((item) => (
+            {/* Main Navigation */}
+            {mainNavItems.map((item) => (
               <NavItemComponent key={item.href} item={item} />
             ))}
             
@@ -199,30 +183,21 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
               <div className="border-t border-border/50" />
             </div>
             
-            {/* Tools Section */}
-            {toolsItems.map((item) => (
+            {/* Advanced Tools Section */}
+            {!isCollapsed && (
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-3">
+                Advanced Tools
+              </p>
+            )}
+            {advancedToolsItems.map((item) => (
               <NavItemComponent key={item.href} item={item} />
             ))}
             
-            {/* Divider */}
+            {/* Settings */}
             <div className="py-2">
               <div className="border-t border-border/50" />
             </div>
-            
-            {/* My Items Section */}
-            {myItemsItems.map((item) => (
-              <NavItemComponent key={item.href} item={item} />
-            ))}
-            
-            {/* Divider */}
-            <div className="py-2">
-              <div className="border-t border-border/50" />
-            </div>
-            
-            {/* Utility Section */}
-            {utilityItems.map((item) => (
-              <NavItemComponent key={item.href} item={item} />
-            ))}
+            <NavItemComponent item={{ icon: Settings, label: 'Settings', href: '/dashboard/settings' }} />
             
             {/* Admin Panel Link */}
             {isAdmin && (
