@@ -333,7 +333,9 @@ export default function Orders() {
                           href={`https://www.ebay.com/mesh/ord/details?mode=SH&orderid=${order.ebay_order_id}&source=Orders&ru=https%3A%2F%2Fwww.ebay.com%2Fsh%2Ford`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary font-mono hover:underline cursor-pointer"
+                          className="text-primary font-mono hover:underline inline-block"
+                          style={{ cursor: 'pointer' }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {order.ebay_order_id}
                         </a>
@@ -355,7 +357,9 @@ export default function Orders() {
                           href={`https://www.amazon.com/your-orders/search/ref=ppx_yo2ov_dt_b_search?opt=ab&search=${order.amazon_order_id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary font-mono hover:underline cursor-pointer"
+                          className="text-primary font-mono hover:underline inline-block"
+                          style={{ cursor: 'pointer' }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {order.amazon_order_id}
                         </a>
