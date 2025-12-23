@@ -3,7 +3,7 @@
 // Replicate API token - stored securely in chrome.storage.local
 // Configurable via Admin Panel
 
-const HOMEPAGE_URL = "https://sellersuit.lovable.app";
+const HOMEPAGE_URL = "http://localhost:8081/";
 
 // Open homepage when extension is installed
 chrome.runtime.onInstalled.addListener((details) => {
