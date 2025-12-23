@@ -89,17 +89,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    let initialSessionHandled = false;
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!isMounted) return;
+        
+        // Skip if this is the initial session and we've already handled it
+        if (event === 'INITIAL_SESSION' && initialSessionHandled) return;
+        
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer Supabase calls with setTimeout
         if (session?.user) {
+          // Defer Supabase calls to avoid potential race conditions
           setTimeout(() => {
-            fetchProfile(session.user.id);
-            fetchRoles(session.user.id);
+            if (isMounted) {
+              fetchProfile(session.user.id);
+              fetchRoles(session.user.id);
+            }
           }, 0);
         } else {
           setProfile(null);
@@ -110,8 +120,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
+    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      initialSessionHandled = true;
+      
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -123,7 +136,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {

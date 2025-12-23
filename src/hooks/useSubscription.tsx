@@ -166,13 +166,13 @@ export function useSubscription() {
     }
   }, [user, checkSubscription]);
 
-  // Refresh subscription status periodically
+  // Refresh subscription status less frequently (every 5 minutes) to reduce API calls
   useEffect(() => {
     if (!user) return;
 
     const interval = setInterval(() => {
       checkSubscription();
-    }, 60000); // Every minute
+    }, 300000); // Every 5 minutes instead of every minute
 
     return () => clearInterval(interval);
   }, [user, checkSubscription]);

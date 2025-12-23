@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Package, 
@@ -50,8 +50,8 @@ export default function Dashboard() {
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get plan credits max based on subscription
-  const getPlanCredits = useCallback(() => {
+  // Get plan credits max based on subscription - memoized
+  const planCreditsMax = useMemo(() => {
     switch (planName) {
       case 'starter': return 50;
       case 'growth': return 200;
@@ -60,13 +60,7 @@ export default function Dashboard() {
     }
   }, [planName]);
 
-  useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user, profile?.credits, getPlanCredits]);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -118,8 +112,6 @@ export default function Dashboard() {
         (acc, order) => acc + (Number(order.profit) || 0), 0
       ) || 0;
 
-      const maxCredits = getPlanCredits();
-
       setStats({
         activeListings: listingsResult.count || 0,
         pendingOrders: pendingOrdersResult.count || 0,
@@ -127,7 +119,7 @@ export default function Dashboard() {
         creditsRemaining: profile?.credits || 0,
         totalProfit,
         ordersToday: todayOrdersResult.count || 0,
-        creditsMax: maxCredits,
+        creditsMax: planCreditsMax,
       });
 
       setRecentOrders(recentOrdersResult.data || []);
@@ -136,7 +128,13 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, profile?.credits, planCreditsMax]);
+
+  useEffect(() => {
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user, fetchDashboardData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -160,14 +158,26 @@ export default function Dashboard() {
 
   const creditsPercent = Math.min((stats.creditsRemaining / stats.creditsMax) * 100, 100);
 
-  // Generate sample sparkline data (in real app, this would come from API)
-  const generateSparklineData = useCallback((base: number, volatility: number = 0.2) => {
+  // Memoize sparkline data to prevent recreation on each render
+  const sparklineDataListings = useMemo(() => {
+    if (stats.activeListings === 0) return undefined;
+    const base = stats.activeListings;
     return Array.from({ length: 7 }, (_, i) => {
       const trend = i * 0.1;
-      const noise = (Math.random() - 0.5) * volatility;
+      const noise = (Math.random() - 0.5) * 0.2;
       return Math.max(0, base * (1 + trend + noise));
     });
-  }, []);
+  }, [stats.activeListings]);
+
+  const sparklineDataProfit = useMemo(() => {
+    if (stats.totalProfit === 0) return undefined;
+    const base = stats.totalProfit;
+    return Array.from({ length: 7 }, (_, i) => {
+      const trend = i * 0.1;
+      const noise = (Math.random() - 0.5) * 0.3;
+      return Math.max(0, base * (1 + trend + noise));
+    });
+  }, [stats.totalProfit]);
 
   const insufficientCredits = stats.creditsRemaining < 1;
 
@@ -234,7 +244,7 @@ export default function Dashboard() {
           icon={Package}
           variant="accent"
           change={stats.activeListings > 0 ? 12 : undefined}
-          sparklineData={stats.activeListings > 0 ? generateSparklineData(stats.activeListings) : undefined}
+          sparklineData={sparklineDataListings}
         />
         <StatsCard
           title="Pending Orders"
@@ -249,7 +259,7 @@ export default function Dashboard() {
           icon={DollarSign}
           variant="success"
           change={stats.totalProfit > 0 ? 8.5 : undefined}
-          sparklineData={stats.totalProfit > 0 ? generateSparklineData(stats.totalProfit, 0.3) : undefined}
+          sparklineData={sparklineDataProfit}
         />
         <StatsCard
           title="Orders Today"
