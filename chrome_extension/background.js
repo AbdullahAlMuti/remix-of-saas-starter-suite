@@ -977,7 +977,12 @@ Output ONLY the refined title.`;
         const tokenData = await chrome.storage.local.get('saasToken');
         const token = tokenData.saasToken;
 
-        if (!token) throw new Error("No SaaS Token found. Please log in.");
+        if (!token) {
+          // Attempt to fix: Open dashboard to trigger sync
+          console.warn("⚠️ No SaaS Token found. Opening dashboard to sync...");
+          chrome.tabs.create({ url: "http://localhost:8080/dashboard" });
+          throw new Error("No SaaS Token found. Dashboard opened for re-sync. Please log in and retry.");
+        }
 
         // Map extension data to Supabase schema
         const payload = {

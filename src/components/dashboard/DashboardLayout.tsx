@@ -20,10 +20,10 @@ export function DashboardLayout() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar onCollapseChange={setIsCollapsed} />
-      <main 
+      <main
         className={cn(
           "min-h-screen transition-[margin] duration-300 ease-in-out",
-          isCollapsed ? "ml-20" : "ml-20 md:ml-[280px]"
+          isCollapsed ? "ml-20" : "ml-[280px]"
         )}
       >
         <div className="p-6 lg:p-8">

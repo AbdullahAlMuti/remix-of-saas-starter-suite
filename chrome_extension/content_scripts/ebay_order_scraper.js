@@ -622,7 +622,12 @@
                 StatusOverlay.log("Proxy Success: " + response.id);
                 return response.id;
             } else {
-                StatusOverlay.error(`Proxy Error: ${response ? response.error : 'Unknown'}`);
+                const errorMsg = response ? response.error : 'Unknown';
+                StatusOverlay.error(`Proxy Error: ${errorMsg}`);
+
+                if (errorMsg && errorMsg.includes("No SaaS Token")) {
+                    StatusOverlay.info("ℹ️ Opening Dashboard to re-sync...");
+                }
                 return null;
             }
         } catch (error) {
