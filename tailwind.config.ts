@@ -129,6 +129,34 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "flame-flicker": {
+          "0%, 100%": { 
+            boxShadow: "0 0 8px 2px rgba(251, 146, 60, 0.6), 0 0 16px 4px rgba(239, 68, 68, 0.4), 0 0 24px 6px rgba(234, 179, 8, 0.2)",
+            transform: "scale(1)"
+          },
+          "25%": { 
+            boxShadow: "0 0 12px 3px rgba(239, 68, 68, 0.7), 0 0 20px 5px rgba(251, 146, 60, 0.5), 0 0 28px 7px rgba(234, 179, 8, 0.3)",
+            transform: "scale(1.02)"
+          },
+          "50%": { 
+            boxShadow: "0 0 10px 2px rgba(234, 179, 8, 0.6), 0 0 18px 4px rgba(251, 146, 60, 0.5), 0 0 26px 6px rgba(239, 68, 68, 0.3)",
+            transform: "scale(0.98)"
+          },
+          "75%": { 
+            boxShadow: "0 0 14px 4px rgba(251, 146, 60, 0.8), 0 0 22px 6px rgba(239, 68, 68, 0.5), 0 0 30px 8px rgba(234, 179, 8, 0.3)",
+            transform: "scale(1.01)"
+          },
+        },
+        "flame-glow": {
+          "0%, 100%": { 
+            opacity: "0.6",
+            filter: "blur(8px)"
+          },
+          "50%": { 
+            opacity: "1",
+            filter: "blur(12px)"
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -137,6 +165,8 @@ export default {
         "fade-up": "fade-up 0.4s ease-out",
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+        "flame-flicker": "flame-flicker 1.5s ease-in-out infinite",
+        "flame-glow": "flame-glow 2s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
