@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   DollarSign, 
   Package, 
@@ -12,13 +12,17 @@ import {
   Trash2,
   Search,
   Activity,
-  AlertCircle
+  AlertCircle,
+  PenTool,
+  X,
+  CheckSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -99,6 +103,8 @@ export default function Listings() {
   const [showNewListingDialog, setShowNewListingDialog] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [selectedListings, setSelectedListings] = useState<Set<string>>(new Set());
+  const [isGeneratingBlog, setIsGeneratingBlog] = useState(false);
 
   const userCredits = profile?.credits || 0;
 
@@ -352,6 +358,83 @@ export default function Listings() {
     return ebayPrice - amazonPrice;
   };
 
+  // Selection handlers
+  const toggleSelectListing = (listingId: string) => {
+    setSelectedListings(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(listingId)) {
+        newSet.delete(listingId);
+      } else {
+        newSet.add(listingId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedListings.size === filteredListings.length) {
+      setSelectedListings(new Set());
+    } else {
+      setSelectedListings(new Set(filteredListings.map(l => l.id)));
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedListings(new Set());
+  };
+
+  // Blog generation handler
+  const handleGenerateBlogPost = async (listingIds: string[], mode: 'manual' | 'bulk') => {
+    if (listingIds.length === 0) {
+      toast({
+        title: "No listings selected",
+        description: "Please select at least one listing to generate a blog post.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeneratingBlog(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-blog-post', {
+        body: {
+          listingIds,
+          generationMode: mode,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        const { summary } = data;
+        toast({
+          title: "Blog Posts Generated",
+          description: `Successfully generated ${summary.successful} of ${summary.total} blog posts.`,
+        });
+        
+        if (mode === 'bulk') {
+          clearSelection();
+        }
+      } else {
+        toast({
+          title: "Generation Failed",
+          description: data.error || "Failed to generate blog posts",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error generating blog posts:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate blog posts. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingBlog(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -601,12 +684,69 @@ export default function Listings() {
         />
       </div>
 
+      {/* Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedListings.size > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          >
+            <Card className="border-primary/30 bg-card/95 backdrop-blur shadow-xl">
+              <CardContent className="py-3 px-4 flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="h-5 w-5 text-primary" />
+                  <span className="font-medium text-foreground">
+                    {selectedListings.size} selected
+                  </span>
+                </div>
+                <div className="h-6 w-px bg-border" />
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => handleGenerateBlogPost(Array.from(selectedListings), 'bulk')}
+                  disabled={isGeneratingBlog}
+                >
+                  {isGeneratingBlog ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <PenTool className="h-4 w-4 mr-2" />
+                      Generate Blog Posts
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSelection}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Listings Table */}
       <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow className="border-border/50 hover:bg-transparent">
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={filteredListings.length > 0 && selectedListings.size === filteredListings.length}
+                    onCheckedChange={toggleSelectAll}
+                    aria-label="Select all"
+                  />
+                </TableHead>
                 <TableHead className="text-muted-foreground">DATE</TableHead>
                 <TableHead className="text-muted-foreground">TITLE</TableHead>
                 <TableHead className="text-muted-foreground">SKU</TableHead>
@@ -621,14 +761,14 @@ export default function Listings() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-12">
+                  <TableCell colSpan={10} className="text-center py-12">
                     <RefreshCw className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                     <p className="text-muted-foreground mt-2">Loading listings...</p>
                   </TableCell>
                 </TableRow>
               ) : filteredListings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-12">
+                  <TableCell colSpan={10} className="text-center py-12">
                     <Package className="h-12 w-12 mx-auto text-muted-foreground/50" />
                     <p className="text-muted-foreground mt-2">No listings found</p>
                     <p className="text-sm text-muted-foreground/70">Click "New Listing" to add your first product</p>
@@ -637,8 +777,19 @@ export default function Listings() {
               ) : (
                 filteredListings.map((listing) => {
                   const profit = calculateProfit(listing.ebay_price, listing.amazon_price);
+                  const isSelected = selectedListings.has(listing.id);
                   return (
-                    <TableRow key={listing.id} className="border-border/30">
+                    <TableRow 
+                      key={listing.id} 
+                      className={`border-border/30 ${isSelected ? 'bg-primary/5' : ''}`}
+                    >
+                      <TableCell>
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() => toggleSelectListing(listing.id)}
+                          aria-label={`Select ${listing.title}`}
+                        />
+                      </TableCell>
                       <TableCell className="text-foreground">
                         {listing.created_at ? format(new Date(listing.created_at), "MM/dd/yyyy") : "-"}
                       </TableCell>
@@ -698,6 +849,16 @@ export default function Listings() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            title="Generate Blog Post"
+                            onClick={() => handleGenerateBlogPost([listing.id], 'manual')}
+                            disabled={isGeneratingBlog}
+                          >
+                            <PenTool className="h-4 w-4 text-primary" />
+                          </Button>
                           <Button 
                             variant="ghost" 
                             size="icon" 
