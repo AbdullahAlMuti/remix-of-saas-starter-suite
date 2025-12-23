@@ -328,7 +328,18 @@ export default function Orders() {
                       {order.created_at ? format(new Date(order.created_at), "MM/dd/yyyy") : "-"}
                     </TableCell>
                     <TableCell>
-                      <span className="text-primary font-mono">{order.ebay_order_id || "-"}</span>
+                      {order.ebay_order_id ? (
+                        <a
+                          href={`https://www.ebay.com/mesh/ord/details?mode=SH&orderid=${order.ebay_order_id}&source=Orders&ru=https%3A%2F%2Fwww.ebay.com%2Fsh%2Ford`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary font-mono hover:underline cursor-pointer"
+                        >
+                          {order.ebay_order_id}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-foreground">1</TableCell>
                     <TableCell className="text-foreground">${order.item_price?.toFixed(2) || "0.00"}</TableCell>
