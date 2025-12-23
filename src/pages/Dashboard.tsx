@@ -345,7 +345,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-2">
               <AdvancedTool icon={Gem} label="Bulk Scanner" />
-              <AdvancedTool icon={Gem} label="500 Best Selling Items on eBay" />
+              <AdvancedTool icon={Gem} label="500 Best Selling Items on eBay" href="/dashboard/best-selling" />
               <AdvancedTool icon={Gem} label="Ali Growth Scanner" />
               <AdvancedTool icon={Gem} label="Turbo Scanner" limit="10 scans/month" />
               <AdvancedTool icon={Gem} label="Autopilot" limit="10 scans/month" />
@@ -401,14 +401,27 @@ function QuickAction({
 function AdvancedTool({ 
   icon: Icon, 
   label, 
-  limit 
+  limit,
+  href,
 }: { 
   icon: LucideIcon; 
   label: string; 
   limit?: string;
+  href?: string;
 }) {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (href) {
+      navigate(href);
+    }
+  };
+
   return (
-    <button className="w-full flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors text-left group">
+    <button 
+      onClick={handleClick}
+      className="w-full flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors text-left group"
+    >
       <div className="flex items-center gap-3">
         <Icon className="h-4 w-4 text-primary" />
         <span className="text-sm text-foreground">{label}</span>
