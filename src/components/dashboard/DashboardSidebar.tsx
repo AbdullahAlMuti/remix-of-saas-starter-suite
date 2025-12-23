@@ -45,6 +45,7 @@ const mainNavItems: NavItem[] = [
   { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
   { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
   { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator' },
+  { icon: FileText, label: 'Blog Posts', href: '/dashboard/blog-posts' },
   { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
   { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
   { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },

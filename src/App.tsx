@@ -24,6 +24,7 @@ import DashboardSettings from "./pages/dashboard/Settings";
 import DashboardPrompts from "./pages/dashboard/Prompts";
 import CalculatorSettings from "./pages/dashboard/CalculatorSettings";
 import BlogGenerator from "./pages/dashboard/BlogGenerator";
+import BlogPosts from "./pages/dashboard/BlogPosts";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -73,6 +74,7 @@ const App = () => (
                 <Route path="extension" element={<ExtensionConnect />} />
                 <Route path="calculator" element={<CalculatorSettings />} />
                 <Route path="blog-generator" element={<BlogGenerator />} />
+                <Route path="blog-posts" element={<BlogPosts />} />
                 <Route path="settings" element={<DashboardSettings />} />
               </Route>
 
