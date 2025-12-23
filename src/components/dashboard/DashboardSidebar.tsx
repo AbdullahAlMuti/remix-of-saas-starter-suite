@@ -100,31 +100,57 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
     return location.pathname.startsWith(href);
   };
 
+  // Check if item is a hot/flame item
+  const isHotItem = (href: string) => {
+    return href === '/dashboard/best-selling' || href === '/dashboard/must-sell';
+  };
+
   const NavItemComponent = ({ item }: { item: NavItem }) => {
     const Icon = item.icon;
     const active = isActive(item.href);
+    const isHot = isHotItem(item.href);
     
     return (
       <Link
         to={item.href}
         className={cn(
-          'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group',
+          'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden',
           active
             ? 'bg-primary/10 text-primary border border-primary/20'
+            : isHot
+            ? 'bg-gradient-to-r from-orange-500/10 via-red-500/10 to-yellow-500/10 text-foreground hover:from-orange-500/20 hover:via-red-500/20 hover:to-yellow-500/20 border border-orange-500/20'
             : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
         )}
       >
+        {/* Flame glow effect for hot items */}
+        {isHot && (
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-red-500/10 to-yellow-500/5 animate-pulse" />
+        )}
+        
         <div className={cn(
-          'w-8 h-8 rounded-lg flex items-center justify-center transition-colors',
-          active ? 'bg-primary text-primary-foreground' : 'bg-sidebar-accent/50 text-sidebar-foreground group-hover:bg-sidebar-accent'
+          'w-8 h-8 rounded-lg flex items-center justify-center transition-colors relative z-10',
+          active 
+            ? 'bg-primary text-primary-foreground' 
+            : isHot 
+            ? 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 text-white shadow-lg shadow-orange-500/30' 
+            : 'bg-sidebar-accent/50 text-sidebar-foreground group-hover:bg-sidebar-accent'
         )}>
-          <Icon className="h-4 w-4" />
+          <Icon className={cn("h-4 w-4", isHot && "animate-pulse")} />
         </div>
         {!isCollapsed && (
           <>
-            <span className={cn('flex-1 text-sm font-medium', active && 'text-primary')}>
+            <span className={cn(
+              'flex-1 text-sm font-medium relative z-10',
+              active && 'text-primary',
+              isHot && 'bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 bg-clip-text text-transparent font-semibold'
+            )}>
               {item.label}
             </span>
+            {isHot && (
+              <span className="relative z-10 px-1.5 py-0.5 text-[10px] font-bold uppercase bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full animate-bounce">
+                Hot
+              </span>
+            )}
             {item.hasSubmenu && (
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
