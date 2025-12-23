@@ -57,6 +57,7 @@ const mainNavItems: NavItem[] = [
 
 // Advanced tools section
 const advancedToolsItems: NavItem[] = [
+  { icon: Sparkles, label: 'AI Product Research', href: '/dashboard/product-research' },
   { icon: TrendingUp, label: '500 Best Selling Items', href: '/dashboard/best-selling' },
   { icon: Flame, label: 'Must Sell Items', href: '/dashboard/must-sell' },
 ];
@@ -102,7 +103,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
 
   // Check if item is a hot/flame item
   const isHotItem = (href: string) => {
-    return href === '/dashboard/best-selling' || href === '/dashboard/must-sell';
+    return href === '/dashboard/best-selling' || href === '/dashboard/must-sell' || href === '/dashboard/product-research';
   };
 
   const NavItemComponent = ({ item }: { item: NavItem }) => {

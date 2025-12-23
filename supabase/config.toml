@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.generate-blog-post]
 verify_jwt = false
+
+[functions.ai-product-research]
+verify_jwt = false

@@ -27,6 +27,7 @@ import BlogGenerator from "./pages/dashboard/BlogGenerator";
 import BlogPosts from "./pages/dashboard/BlogPosts";
 import BestSellingItems from "./pages/dashboard/BestSellingItems";
 import MustSellItems from "./pages/dashboard/MustSellItems";
+import ProductResearch from "./pages/dashboard/ProductResearch";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlans from "./pages/admin/AdminPlans";
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="blog-posts" element={<BlogPosts />} />
                 <Route path="best-selling" element={<BestSellingItems />} />
                 <Route path="must-sell" element={<MustSellItems />} />
+                <Route path="product-research" element={<ProductResearch />} />
                 <Route path="settings" element={<DashboardSettings />} />
               </Route>
 
