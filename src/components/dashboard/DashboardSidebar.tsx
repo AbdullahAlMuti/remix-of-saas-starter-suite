@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   Package,
@@ -90,7 +89,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
     <aside
       data-collapsed={isCollapsed}
       className={cn(
-        "h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50 transition-[width] duration-300 ease-in-out",
+        "h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-50",
         isCollapsed ? "w-20" : "w-[280px]"
       )}
     >
@@ -129,7 +128,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
                     active
                       ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
                       : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
@@ -157,7 +156,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
                     active
                       ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-primary/20'
                       : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
@@ -180,7 +179,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
                 <Link
                   to="/admin"
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-xl',
                     'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   )}
                 >
@@ -223,7 +222,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
           <Link
             to="/dashboard/settings"
             className={cn(
-              'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+              'flex items-center gap-3 px-3 py-2.5 rounded-xl',
               'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
             )}
           >
@@ -234,7 +233,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
           <button
             onClick={signOut}
             className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl',
               'text-destructive hover:bg-destructive/10'
             )}
           >
