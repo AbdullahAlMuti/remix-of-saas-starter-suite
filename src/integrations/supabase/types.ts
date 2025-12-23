@@ -220,6 +220,139 @@ export type Database = {
           },
         ]
       }
+      blog_generation_settings: {
+        Row: {
+          affiliate_tag: string | null
+          auto_generate_enabled: boolean | null
+          auto_publish_enabled: boolean | null
+          content_style: string | null
+          created_at: string
+          custom_prompt: string | null
+          default_destination_id: string | null
+          id: string
+          include_price_history: boolean | null
+          include_pros_cons: boolean | null
+          include_specifications: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          affiliate_tag?: string | null
+          auto_generate_enabled?: boolean | null
+          auto_publish_enabled?: boolean | null
+          content_style?: string | null
+          created_at?: string
+          custom_prompt?: string | null
+          default_destination_id?: string | null
+          id?: string
+          include_price_history?: boolean | null
+          include_pros_cons?: boolean | null
+          include_specifications?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          affiliate_tag?: string | null
+          auto_generate_enabled?: boolean | null
+          auto_publish_enabled?: boolean | null
+          content_style?: string | null
+          created_at?: string
+          custom_prompt?: string | null
+          default_destination_id?: string | null
+          id?: string
+          include_price_history?: boolean | null
+          include_pros_cons?: boolean | null
+          include_specifications?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_generation_settings_default_destination_id_fkey"
+            columns: ["default_destination_id"]
+            isOneToOne: false
+            referencedRelation: "publishing_destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_posts: {
+        Row: {
+          affiliate_link: string | null
+          amazon_asin: string | null
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image_url: string | null
+          generation_mode: string | null
+          id: string
+          listing_id: string | null
+          meta_description: string | null
+          product_price: number | null
+          product_title: string | null
+          published_at: string | null
+          published_to: string | null
+          published_url: string | null
+          seo_keywords: string[] | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          affiliate_link?: string | null
+          amazon_asin?: string | null
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          generation_mode?: string | null
+          id?: string
+          listing_id?: string | null
+          meta_description?: string | null
+          product_price?: number | null
+          product_title?: string | null
+          published_at?: string | null
+          published_to?: string | null
+          published_url?: string | null
+          seo_keywords?: string[] | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          affiliate_link?: string | null
+          amazon_asin?: string | null
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          generation_mode?: string | null
+          id?: string
+          listing_id?: string | null
+          meta_description?: string | null
+          product_price?: number | null
+          product_title?: string | null
+          published_at?: string | null
+          published_to?: string | null
+          published_url?: string | null
+          seo_keywords?: string[] | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calculator_settings: {
         Row: {
           created_at: string
@@ -829,6 +962,60 @@ export type Database = {
           prompt_type?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      publishing_destinations: {
+        Row: {
+          access_token: string | null
+          api_key: string | null
+          api_secret: string | null
+          created_at: string
+          destination_type: string
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          settings: Json | null
+          site_url: string | null
+          updated_at: string
+          user_id: string
+          username: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          api_key?: string | null
+          api_secret?: string | null
+          created_at?: string
+          destination_type: string
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          settings?: Json | null
+          site_url?: string | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          api_key?: string | null
+          api_secret?: string | null
+          created_at?: string
+          destination_type?: string
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          settings?: Json | null
+          site_url?: string | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+          webhook_url?: string | null
         }
         Relationships: []
       }

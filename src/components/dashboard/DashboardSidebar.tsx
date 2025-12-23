@@ -22,6 +22,7 @@ import {
   Crown,
   Puzzle,
   Calculator,
+  PenTool,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -43,6 +44,7 @@ const mainNavItems: NavItem[] = [
   { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
   { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
   { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
+  { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator' },
   { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
   { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
   { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },
