@@ -30,50 +30,125 @@ async function getGoogleSheetUrl() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 🔒 SECURITY GATEKEEPER
+// 🔒 SECURITY GATEKEEPER (Enhanced with retry & better logging)
 // ═══════════════════════════════════════════════════════════
 
 let isExtensionUnlocked = false;
+let lastAuthCheck = 0;
+const AUTH_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-// Verify Auth with Backend
-async function verifyAuthStatus() {
+// Logging utility
+function authLog(level, message, data = null) {
+  const prefix = { debug: '🔍', info: 'ℹ️', success: '✅', warn: '⚠️', error: '❌' }[level] || '📝';
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+  if (data) {
+    console.log(`[${timestamp}] ${prefix} [Auth] ${message}`, data);
+  } else {
+    console.log(`[${timestamp}] ${prefix} [Auth] ${message}`);
+  }
+}
+
+// Fetch with retry for auth requests
+async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 1000) {
+  let lastError;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (response.ok || (response.status >= 400 && response.status < 500)) {
+        return response;
+      }
+      
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (err) {
+      lastError = err;
+      if (err.name === 'AbortError') {
+        authLog('warn', `Request timeout (attempt ${attempt + 1})`);
+      }
+    }
+    
+    if (attempt < maxRetries) {
+      const delay = baseDelay * Math.pow(2, attempt);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError;
+}
+
+// Verify Auth with Backend (Enhanced)
+async function verifyAuthStatus(forceRefresh = false) {
+  // Skip if recently checked (unless forced)
+  if (!forceRefresh && Date.now() - lastAuthCheck < AUTH_CHECK_INTERVAL && isExtensionUnlocked) {
+    authLog('debug', 'Skipping auth check (recently verified)');
+    return true;
+  }
+  
   try {
-    const data = await chrome.storage.local.get('saasToken');
+    const data = await chrome.storage.local.get(['saasToken', 'authTimestamp']);
     const token = data.saasToken;
 
     if (!token) {
-      console.warn('🔒 LOCKDOWN: No saasToken found.');
+      authLog('warn', 'LOCKDOWN: No saasToken found');
       isExtensionUnlocked = false;
       return false;
     }
 
-    // Call Backend Authority
-    const response = await fetch('https://ojxzssooylmydystjvdo.supabase.co/functions/v1/auth-status', {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    // Call Backend Authority with retry
+    const response = await fetchWithRetry(
+      'https://ojxzssooylmydystjvdo.supabase.co/functions/v1/auth-status',
+      {
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      },
+      2,
+      500
+    );
 
     if (response.ok) {
-      const data = await response.json();
-      console.log('🔓 UNLOCKED: Session verified.', data.user);
+      const result = await response.json();
+      
+      if (result.success && result.user) {
+        authLog('success', 'Session verified', { userId: result.user.id, email: result.user.email });
 
-      // SYNC: Update Extension Storage with fresh data
-      await chrome.storage.local.set({
-        userId: data.user.id,
-        userPlan: data.user.plan,
-        userCredits: data.user.credits,
-        userEmail: data.user.email
-      });
+        // SYNC: Update Extension Storage with fresh data
+        await chrome.storage.local.set({
+          userId: result.user.id,
+          userPlan: result.user.plan,
+          userCredits: result.user.credits,
+          userEmail: result.user.email,
+          authTimestamp: Date.now()
+        });
 
-      isExtensionUnlocked = true;
-      return true;
-    } else {
-      console.warn('🔒 LOCKDOWN: Invalid session.');
-      isExtensionUnlocked = false;
-      return false;
+        isExtensionUnlocked = true;
+        lastAuthCheck = Date.now();
+        return true;
+      }
     }
+    
+    // Auth failed - check response details
+    const errorData = await response.json().catch(() => ({}));
+    authLog('warn', 'LOCKDOWN: Invalid session', { status: response.status, error: errorData.error });
+    isExtensionUnlocked = false;
+    return false;
+    
   } catch (e) {
-    console.error('⚠️ Auth Check Error:', e);
+    authLog('error', 'Auth Check Error', { message: e.message });
+    
+    // If network error but we have recent valid auth, stay unlocked temporarily
+    if (isExtensionUnlocked && Date.now() - lastAuthCheck < 30 * 60 * 1000) {
+      authLog('info', 'Network error but using cached auth status');
+      return true;
+    }
+    
     isExtensionUnlocked = false;
     return false;
   }
@@ -380,18 +455,68 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  // 2. Token Sync from Web App
+  // 2. Token Sync from Web App (Enhanced)
   if (request.action === 'SYNC_TOKEN') {
-    console.log('🔄 SYNC_TOKEN received from Web App');
+    authLog('info', 'SYNC_TOKEN received from Web App', { 
+      hasToken: !!request.token, 
+      hasUser: !!request.user,
+      expiresAt: request.expiresAt 
+    });
+    
     if (request.token) {
-      chrome.storage.local.set({ saasToken: request.token }, () => {
-        console.log('💾 Token saved to extension storage.');
-        verifyAuthStatus().then(success => {
-          sendResponse({ success });
-        });
-      });
+      (async () => {
+        try {
+          // Save token and user data
+          const saveData = { 
+            saasToken: request.token,
+            authTimestamp: Date.now()
+          };
+          
+          // If user data provided, save it too
+          if (request.user) {
+            saveData.saasUser = request.user;
+            saveData.userId = request.user.id;
+            saveData.userEmail = request.user.email;
+          }
+          
+          await chrome.storage.local.set(saveData);
+          authLog('success', 'Token saved to extension storage');
+          
+          // Verify with backend (force refresh)
+          const verified = await verifyAuthStatus(true);
+          
+          sendResponse({ success: true, verified });
+          
+        } catch (err) {
+          authLog('error', 'Failed to process SYNC_TOKEN', err);
+          sendResponse({ success: false, error: err.message });
+        }
+      })();
       return true; // async response
+    } else {
+      sendResponse({ success: false, error: 'No token provided' });
     }
+    return true;
+  }
+  
+  // Handle logout from web app
+  if (request.action === 'LOGOUT') {
+    authLog('info', 'LOGOUT received from Web App');
+    (async () => {
+      try {
+        await chrome.storage.local.remove([
+          'saasToken', 'saasUser', 'userId', 'userEmail', 
+          'userPlan', 'userCredits', 'authTimestamp'
+        ]);
+        isExtensionUnlocked = false;
+        lastAuthCheck = 0;
+        authLog('success', 'Auth data cleared');
+        sendResponse({ success: true });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
   }
 
   // 2. THE GATE: Block EVERYTHING else if locked (except allowed actions)
@@ -525,40 +650,108 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.error('❌ Failed to increment listed count:', countError);
           }
 
-          // Then handle Google Sheets async (don't block the response)
-          console.log('�� Attempting to send data to Google Sheets...');
-          // Then handle SaaS Logging async
-          console.log('☁️ Sending data to SaaS Backend...');
-          try {
-            // Fetch token
-            const tokenData = await chrome.storage.local.get('saasToken');
-            const token = tokenData.saasToken;
+          // Then handle SaaS Logging async with retry
+          authLog('info', 'Syncing listing to SaaS Backend...');
+          
+          (async function syncWithRetry() {
+            const MAX_RETRIES = 3;
+            let lastError = null;
+            
+            for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+              try {
+                // Fetch token
+                const tokenData = await chrome.storage.local.get('saasToken');
+                const token = tokenData.saasToken;
 
-            if (!token) throw new Error("Missing auth token");
+                if (!token) {
+                  authLog('warn', 'No auth token for sync-listing, queueing for later');
+                  // Queue for later sync
+                  await chrome.storage.local.get('pendingSyncQueue').then(data => {
+                    const queue = data.pendingSyncQueue || [];
+                    queue.push({
+                      type: 'listing',
+                      data: {
+                        title: request.title,
+                        sku: request.sku,
+                        ebay_price: request.finalPrice,
+                        amazon_price: request.amazonPrice,
+                        amazon_url: request.productURL,
+                        amazon_asin: request.asin,
+                        status: "active"
+                      },
+                      queuedAt: Date.now()
+                    });
+                    return chrome.storage.local.set({ pendingSyncQueue: queue });
+                  });
+                  return;
+                }
 
-            const logResponse = await fetch('https://ojxzssooylmydystjvdo.supabase.co/functions/v1/sync-listing', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({
-                title: request.title,
-                sku: request.sku,
-                ebay_price: request.finalPrice,
-                amazon_price: request.amazonPrice,
-                amazon_url: request.productURL,
-                amazon_asin: request.asin,
-                status: "active"
-              })
-            });
+                const logResponse = await fetchWithRetry(
+                  'https://ojxzssooylmydystjvdo.supabase.co/functions/v1/sync-listing',
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                      title: request.title,
+                      sku: request.sku,
+                      ebay_price: request.finalPrice,
+                      amazon_price: request.amazonPrice,
+                      amazon_url: request.productURL,
+                      amazon_asin: request.asin,
+                      status: "active"
+                    })
+                  },
+                  2, // retries for this fetch
+                  1000
+                );
 
-            const logResult = await logResponse.json();
-            console.log('✅ SaaS Logging completed:', logResult);
+                if (!logResponse.ok) {
+                  const errorData = await logResponse.json().catch(() => ({}));
+                  throw new Error(errorData.error || `HTTP ${logResponse.status}`);
+                }
 
-          } catch (sheetError) {
-            console.error('❌ SaaS Logging Failed:', sheetError);
-          }
+                const logResult = await logResponse.json();
+                authLog('success', 'Listing synced to SaaS', logResult.summary || logResult);
+                return; // Success, exit retry loop
+
+              } catch (err) {
+                lastError = err;
+                authLog('warn', `Sync attempt ${attempt + 1}/${MAX_RETRIES} failed`, { error: err.message });
+                
+                if (attempt < MAX_RETRIES - 1) {
+                  await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                }
+              }
+            }
+            
+            // All retries failed - queue for later
+            authLog('error', 'All sync attempts failed, queueing for later', { error: lastError?.message });
+            try {
+              const data = await chrome.storage.local.get('pendingSyncQueue');
+              const queue = data.pendingSyncQueue || [];
+              queue.push({
+                type: 'listing',
+                data: {
+                  title: request.title,
+                  sku: request.sku,
+                  ebay_price: request.finalPrice,
+                  amazon_price: request.amazonPrice,
+                  amazon_url: request.productURL,
+                  amazon_asin: request.asin,
+                  status: "active"
+                },
+                queuedAt: Date.now(),
+                lastError: lastError?.message
+              });
+              await chrome.storage.local.set({ pendingSyncQueue: queue });
+              authLog('info', 'Listing queued for retry', { queueSize: queue.length });
+            } catch (queueError) {
+              authLog('error', 'Failed to queue listing', queueError);
+            }
+          })();
         } else {
           sendResponse({ success: false, error: "Missing required data (title or SKU)" });
           responseSent = true;
