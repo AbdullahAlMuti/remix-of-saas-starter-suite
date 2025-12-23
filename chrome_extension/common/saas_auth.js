@@ -24,7 +24,7 @@ function setupSaaSIntegrationListeners() {
         saasLoginBtn.addEventListener('click', () => {
             const extensionId = chrome.runtime.id;
             // Use localhost for MVP
-            const authUrl = `http://localhost:3000/auth/extension-login?extension_id=${extensionId}`;
+            const authUrl = `http://localhost:8080/auth/extension-login?extension_id=${extensionId}`;
             window.open(authUrl, '_blank');
         });
     }
@@ -34,7 +34,7 @@ async function handleAuthExchange(code, container) {
     try {
         if (container) container.innerHTML = '<p>Connecting...</p>';
 
-        const response = await fetch('http://localhost:3000/v1/auth/exchange', {
+        const response = await fetch('http://localhost:8080/v1/auth/exchange', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code })
@@ -86,7 +86,7 @@ async function checkSaaSStatus(container) {
         `;
         document.getElementById('saas-login-btn-retry')?.addEventListener('click', () => {
             const extensionId = chrome.runtime.id;
-            const authUrl = `http://localhost:3000/auth/extension-login?extension_id=${extensionId}`;
+            const authUrl = `http://localhost:8080/auth/extension-login?extension_id=${extensionId}`;
             window.open(authUrl, '_blank');
         });
     }

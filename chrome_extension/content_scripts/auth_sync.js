@@ -1,5 +1,5 @@
 // auth_sync.js
-// Runs on http://localhost:3000/* to sync Auth Token to Extension
+// Runs on http://localhost:8080/* to sync Auth Token to Extension
 
 console.log('🔌 Auth Sync Script Loaded');
 

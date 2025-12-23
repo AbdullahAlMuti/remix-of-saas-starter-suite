@@ -95,9 +95,36 @@ chrome.runtime.onInstalled.addListener(() => {
 // 🔄 SETTINGS SYNC (Backend -> Extension)
 // ═══════════════════════════════════════════════════════════
 async function syncSettings() {
-  // NOTE: Settings sync disabled for now as the Supabase backend 
-  // uses edge functions for specific tasks.
-  return;
+  try {
+    const data = await chrome.storage.local.get('saasToken');
+    const token = data.saasToken;
+    if (!token) return;
+
+    const saasUrl = 'https://ojxzssooylmydystjvdo.supabase.co';
+    const saasKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeHpzc29veWxteWR5c3RqdmRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMzY3NTgsImV4cCI6MjA4MTkxMjc1OH0.lQcFC2HryZamOEbGYONHpY37K0kTK4OOAa9MlluV7Dc';
+
+    // Fetch Global Gemini API Key from Admin Settings
+    const response = await fetch(`${saasUrl}/rest/v1/admin_settings?key=eq.gemini_api_key`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'apikey': saasKey
+      }
+    });
+
+    if (response.ok) {
+      const settingsData = await response.json();
+      if (settingsData && settingsData.length > 0) {
+        const apiKey = settingsData[0].value;
+        if (apiKey) {
+          await chrome.storage.local.set({ geminiApiKey: apiKey });
+          console.log('🔄 SYNC: Gemini API Key updated from Admin Panel.');
+        }
+      }
+    }
+  } catch (error) {
+    console.error('🔄 SYNC ERROR:', error);
+  }
 }
 
 // Sync every 30 minutes
@@ -113,7 +140,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     await chrome.storage.local.set({ firstInstall: true });
 
     // Open Hosted Onboarding Page
-    chrome.tabs.create({ url: "http://localhost:8080/dashboard" });
+    chrome.tabs.create({ url: "http://localhost:8080" });
   } else if (details.reason === 'update') {
     console.log('🔄 Extension updated to version', chrome.runtime.getManifest().version);
   }
@@ -420,7 +447,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
           try {
             // Call LOCAL BACKEND
-            const API_ENDPOINT = "http://127.0.0.1:3000/v1/ai/remove-bg";
+            const API_ENDPOINT = "http://localhost:8080/v1/ai/remove-bg";
 
             console.log('🚀 Sending to SaaS Backend:', API_ENDPOINT);
 
@@ -645,22 +672,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       try {
         const { productData } = request;
 
-        const results = await chrome.storage.local.get(['saasToken', 'geminiApiKey', 'adminSettings']);
+        // Try to get fresh key if missing
+        let results = await chrome.storage.local.get(['saasToken', 'geminiApiKey', 'adminSettings']);
+        let apiKey = results.geminiApiKey;
+
+        if (!apiKey) {
+          console.log("🔍 Gemini key missing in storage, syncing now...");
+          await syncSettings();
+          results = await chrome.storage.local.get(['geminiApiKey']);
+          apiKey = results.geminiApiKey;
+        }
+
         const token = results.saasToken;
-        const apiKey = results.geminiApiKey;
         const settings = results.adminSettings || {};
 
         if (!token) throw new Error("Please log in to the SaaS dashboard.");
-        if (!apiKey) throw new Error("Gemini API key not configured in settings.");
+        if (!apiKey) throw new Error("Missing Gemini API Key. Please configure it in the Admin Panel.");
 
-        const promptTemplate = settings.ai_title_prompt || "Generate a catchy SEO title for: {{title}}";
+        // Priority 1: Use specific prompt from settings if available
+        // Priority 2: Use a default optimized prompt
+        const defaultPrompt = `Generate a high-converting, SEO-optimized eBay product title (max 80 chars) for this Amazon product. 
+Original Title: {{title}}
+Keywords: {{keywords}}
+Rules: No mentions of Amazon, no brand names unless essential, highlight key features. 
+Output ONLY the refined title.`;
+
+        const promptTemplate = settings.ai_title_prompt || defaultPrompt;
 
         const title = await generateTitleWithGemini(apiKey, promptTemplate, {
           title: productData?.title,
           keywords: productData?.keywords
         });
 
-        console.log("✅ SaaS AI Title:", title);
+        console.log("✅ SaaS AI Title Generated:", title);
         sendResponse({ success: true, title: title });
 
       } catch (error) {

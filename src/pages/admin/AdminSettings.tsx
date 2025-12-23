@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Save, Key, Globe, Bell, Shield } from 'lucide-react';
+import { Settings, Save, Key, Globe, Shield, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import AmazonAPISettings from '@/components/admin/AmazonAPISettings';
 
 export default function AdminSettings() {
@@ -19,15 +20,64 @@ export default function AdminSettings() {
     maintenanceMode: false,
   });
 
+  const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    fetchAdminSettings();
+  }, []);
+
+  const fetchAdminSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('*')
+        .eq('key', 'gemini_api_key')
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        setGeminiApiKey(data.value || '');
+      }
+    } catch (error) {
+      console.error('Error fetching admin settings:', error);
+      toast.error('Failed to load platform settings');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast.success('Settings saved successfully');
-    setIsSaving(false);
+    try {
+      // Save Gemini API key
+      const { error } = await supabase
+        .from('admin_settings')
+        .upsert({
+          key: 'gemini_api_key',
+          value: geminiApiKey,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'key' });
+
+      if (error) throw error;
+
+      toast.success('Settings saved successfully');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Failed to save settings');
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-4xl">
@@ -38,15 +88,53 @@ export default function AdminSettings() {
       >
         <h1 className="text-3xl font-display font-bold text-foreground">Platform Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Configure global platform settings
+          Configure global platform settings and AI integrations
         </p>
+      </motion.div>
+
+      {/* AI Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="glass-card p-6 border-primary/20 bg-primary/5"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-display font-semibold text-foreground">AI Configuration</h2>
+            <p className="text-sm text-muted-foreground">Power the Amazon title and description generator</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="geminiApiKey" className="text-foreground flex items-center gap-2">
+              <Key className="h-4 w-4" />
+              Gemini API Key
+            </Label>
+            <Input
+              id="geminiApiKey"
+              type="password"
+              placeholder="Enter your Google Gemini API Key"
+              value={geminiApiKey}
+              onChange={(e) => setGeminiApiKey(e.target.value)}
+              className="bg-secondary/50 border-primary/20 focus:border-primary"
+            />
+            <p className="text-xs text-muted-foreground">
+              Used by the Chrome extension to automatically generate optimized product titles.
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* General Settings */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.2 }}
         className="glass-card p-6"
       >
         <div className="flex items-center gap-3 mb-6">
@@ -82,59 +170,6 @@ export default function AdminSettings() {
         </div>
       </motion.div>
 
-      {/* Authentication Settings */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass-card p-6"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-green-400 flex items-center justify-center">
-            <Shield className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h2 className="text-lg font-display font-semibold text-foreground">Authentication</h2>
-            <p className="text-sm text-muted-foreground">User authentication settings</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-foreground">Enable Registration</Label>
-              <p className="text-sm text-muted-foreground">Allow new users to sign up</p>
-            </div>
-            <Switch
-              checked={settings.enableRegistration}
-              onCheckedChange={(checked) => setSettings({ ...settings, enableRegistration: checked })}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-foreground">Require Email Verification</Label>
-              <p className="text-sm text-muted-foreground">Users must verify email before access</p>
-            </div>
-            <Switch
-              checked={settings.requireEmailVerification}
-              onCheckedChange={(checked) => setSettings({ ...settings, requireEmailVerification: checked })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="maxSessions" className="text-foreground">Max Sessions Per User</Label>
-            <Input
-              id="maxSessions"
-              type="number"
-              value={settings.maxSessionsPerUser}
-              onChange={(e) => setSettings({ ...settings, maxSessionsPerUser: parseInt(e.target.value) })}
-              className="bg-secondary/50 w-32"
-            />
-          </div>
-        </div>
-      </motion.div>
-
       {/* Feature Flags */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -163,17 +198,6 @@ export default function AdminSettings() {
               onCheckedChange={(checked) => setSettings({ ...settings, enableAutoOrders: checked })}
             />
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-foreground text-destructive">Maintenance Mode</Label>
-              <p className="text-sm text-muted-foreground">Disable access for non-admin users</p>
-            </div>
-            <Switch
-              checked={settings.maintenanceMode}
-              onCheckedChange={(checked) => setSettings({ ...settings, maintenanceMode: checked })}
-            />
-          </div>
         </div>
       </motion.div>
 
@@ -184,17 +208,22 @@ export default function AdminSettings() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="flex justify-end"
+        transition={{ delay: 0.5 }}
+        className="flex justify-end sticky bottom-8 pt-4"
       >
         <Button
           variant="hero"
           size="lg"
           onClick={handleSave}
           disabled={isSaving}
+          className="shadow-xl"
         >
-          <Save className="h-5 w-5" />
-          {isSaving ? 'Saving...' : 'Save Settings'}
+          {isSaving ? (
+            <RefreshCw className="h-5 w-5 animate-spin mr-2" />
+          ) : (
+            <Save className="h-5 w-5 mr-2" />
+          )}
+          {isSaving ? 'Saving...' : 'Save All Settings'}
         </Button>
       </motion.div>
     </div>
