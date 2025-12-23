@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  ShoppingCart,
-  DollarSign,
-  TrendingUp,
-  Download,
-  ExternalLink,
+import { 
+  ShoppingCart, 
+  DollarSign, 
+  TrendingUp, 
+  Download, 
+  ExternalLink, 
   RefreshCw,
   Package,
   MapPin,
@@ -66,7 +66,7 @@ export default function Orders() {
 
   const fetchOrders = async () => {
     if (!user) return;
-
+    
     try {
       const { data, error } = await supabase
         .from("auto_orders")
@@ -135,7 +135,7 @@ export default function Orders() {
     a.download = `auto-orders-${format(new Date(), "yyyy-MM-dd")}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-
+    
     toast({
       title: "Exported",
       description: "Orders exported to CSV successfully",
@@ -185,7 +185,7 @@ export default function Orders() {
           <p className="text-muted-foreground">Track status of automated fulfillment.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
+          <Button 
             variant="default"
             size="sm"
             onClick={exportToCSV}
@@ -194,7 +194,7 @@ export default function Orders() {
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          <Button
+          <Button 
             variant="default"
             size="sm"
             className="bg-destructive hover:bg-destructive/90"
@@ -203,14 +203,14 @@ export default function Orders() {
             <Download className="h-4 w-4 mr-2" />
             Export PDF
           </Button>
-          <Button
+          <Button 
             variant="default"
             size="sm"
           >
             <ExternalLink className="h-4 w-4 mr-2" />
             Orders
           </Button>
-          <Button
+          <Button 
             variant="outline"
             size="sm"
             onClick={handleRefresh}
@@ -329,18 +329,17 @@ export default function Orders() {
                     </TableCell>
                     <TableCell>
                       {order.ebay_order_id ? (
-                        <span
-                          role="button"
-                          className="text-primary font-mono hover:underline inline-block relative z-10 cursor-pointer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(`https://www.ebay.com/sh/ord/details?orderid=${order.ebay_order_id}`, '_blank', 'noopener,noreferrer');
-                          }}
+                        <a
+                          href={`https://www.ebay.com/mesh/ord/details?mode=SH&orderid=${order.ebay_order_id}&source=Orders&ru=https%3A%2F%2Fwww.ebay.com%2Fsh%2Ford`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary font-mono hover:underline inline-flex items-center gap-1"
+                          style={{ cursor: 'pointer' }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {order.ebay_order_id}
-                        </span>
-
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}
@@ -355,17 +354,17 @@ export default function Orders() {
                     </TableCell>
                     <TableCell>
                       {order.amazon_order_id ? (
-                        <span
-                          role="button"
-                          className="text-primary font-mono hover:underline inline-block relative z-10 cursor-pointer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(`https://www.amazon.com/your-orders/search/ref=ppx_yo2ov_dt_b_search?opt=ab&search=${order.amazon_order_id}`, '_blank', 'noopener,noreferrer');
-                          }}
+                        <a
+                          href={`https://www.amazon.com/your-orders/search/ref=ppx_yo2ov_dt_b_search?opt=ab&search=${order.amazon_order_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary font-mono hover:underline inline-flex items-center gap-1"
+                          style={{ cursor: 'pointer' }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {order.amazon_order_id}
-                        </span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
                       ) : (
                         <span className="text-muted-foreground">Pending</span>
                       )}
