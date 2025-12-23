@@ -165,7 +165,8 @@ export default function SelectPlan() {
       }
 
       if (url) {
-        window.location.href = url;
+        // Open in new tab to avoid iframe blocking issues
+        window.open(url, '_blank');
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to process');
