@@ -132,10 +132,10 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
           active 
             ? 'bg-primary text-primary-foreground' 
             : isHot 
-            ? 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 text-white shadow-lg shadow-orange-500/30' 
+            ? 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 text-white animate-flame-flicker' 
             : 'bg-sidebar-accent/50 text-sidebar-foreground group-hover:bg-sidebar-accent'
         )}>
-          <Icon className={cn("h-4 w-4", isHot && "animate-pulse")} />
+          <Icon className="h-4 w-4" />
         </div>
         {!isCollapsed && (
           <>
