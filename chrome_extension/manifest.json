@@ -46,6 +46,8 @@
         "*://www.amazon.com.au/*"
       ],
       "js": [
+        "common/config.js",
+        "common/performance.js",
         "common/storage.js",
         "common/ui.js",
         "common/analytics.js",
@@ -66,6 +68,8 @@
         "*://www.walmart.ca/*"
       ],
       "js": [
+        "common/config.js",
+        "common/performance.js",
         "common/storage.js",
         "common/ui.js",
         "common/analytics.js",
@@ -86,6 +90,8 @@
         "*://www.ebay.com/lstng*"
       ],
       "js": [
+        "common/config.js",
+        "common/performance.js",
         "common/storage.js",
         "common/ui.js",
         "common/analytics.js",
@@ -129,6 +135,9 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "common/config.js",
+        "common/performance.js",
+        "common/message-handler.js",
         "common/storage.js",
         "common/ui.js",
         "common/analytics.js",
