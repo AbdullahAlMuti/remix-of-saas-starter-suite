@@ -1,31 +1,102 @@
-// ebay-snipping-extension/content_scripts/amazon_injector.js
+// ═══════════════════════════════════════════════════════════
+// 📦 AMAZON INJECTOR - OPTIMIZED
+// Content script for Amazon product pages
+// Uses centralized config and performance utilities
+// ═══════════════════════════════════════════════════════════
 
+// State management
 let uiInjected = false;
+let isProcessing = false;
 
-// Helper to wait for element presence
+// ═══════════════════════════════════════════════════════════
+// 🛠️ UTILITY FUNCTIONS (with performance optimizations)
+// ═══════════════════════════════════════════════════════════
+
+// Debounce utility for rate limiting
+const createDebounce = (fn, delay = 300) => {
+  let timer = null;
+  return function(...args) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      fn.apply(this, args);
+    }, delay);
+  };
+};
+
+// Throttle utility for limiting call frequency
+const createThrottle = (fn, limit = 1000) => {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= limit) {
+      lastCall = now;
+      return fn.apply(this, args);
+    }
+  };
+};
+
+// Memory cache for frequently accessed data
+const cache = {
+  data: new Map(),
+  timestamps: new Map(),
+  
+  get(key, ttl = 60000) {
+    if (!this.data.has(key)) return null;
+    const timestamp = this.timestamps.get(key) || 0;
+    if (Date.now() - timestamp > ttl) {
+      this.data.delete(key);
+      this.timestamps.delete(key);
+      return null;
+    }
+    return this.data.get(key);
+  },
+  
+  set(key, value) {
+    this.data.set(key, value);
+    this.timestamps.set(key, Date.now());
+  },
+  
+  clear() {
+    this.data.clear();
+    this.timestamps.clear();
+  }
+};
+
+// Helper to wait for element presence with caching
 const waitForElement = (selector, timeout = 5000) => {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
-        }
+  return new Promise((resolve, reject) => {
+    // Check cache first
+    const cached = cache.get(`element_${selector}`);
+    if (cached && document.contains(cached)) {
+      return resolve(cached);
+    }
+    
+    const existing = document.querySelector(selector);
+    if (existing) {
+      cache.set(`element_${selector}`, existing);
+      return resolve(existing);
+    }
 
-        const observer = new MutationObserver(mutations => {
-            if (document.querySelector(selector)) {
-                observer.disconnect();
-                resolve(document.querySelector(selector));
-            }
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        setTimeout(() => {
-            observer.disconnect();
-            reject(new Error(`Element ${selector} not found within ${timeout}ms`));
-        }, timeout);
+    const observer = new MutationObserver(() => {
+      const element = document.querySelector(selector);
+      if (element) {
+        observer.disconnect();
+        cache.set(`element_${selector}`, element);
+        resolve(element);
+      }
     });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(`Element ${selector} not found within ${timeout}ms`));
+    }, timeout);
+  });
 };
 
 // **IMPROVED** Function to inject the main UI panel

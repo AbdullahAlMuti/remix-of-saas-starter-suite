@@ -1,93 +1,90 @@
-// ebay-snipping-extension/background.js
-
-// Replicate API token - stored securely in chrome.storage.local
-// Configurable via Admin Panel
-
-const HOMEPAGE_URL = "http://localhost:8081/";
-
-// Open homepage when extension is installed
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    console.log('[SellerSuit] Extension installed, opening homepage');
-    chrome.tabs.create({ url: HOMEPAGE_URL });
-  }
-});
-
-// Default Google Sheet URL (fallback if not in storage)
-const DEFAULT_SHEET_URL = "https://script.google.com/macros/s/AKfycbwU_ER6RWnY0koDjq7zs__LTdkMCF07nP8wvTe_05qZ5pcbDlpTu0VBlPZ3sI-sqIV5/exec";
-
-// Helper function to get Google Sheet URL from storage with fallback
-async function getGoogleSheetUrl() {
-  try {
-    // Check both storage keys (different parts of the codebase use different keys)
-    const result = await chrome.storage.local.get(['googleSheetUrl', 'googleAppsScriptUrl']);
-
-    // Prefer googleAppsScriptUrl (used by content scripts), fallback to googleSheetUrl
-    const url = result.googleAppsScriptUrl || result.googleSheetUrl || DEFAULT_SHEET_URL;
-
-    console.log('🔍 Storage lookup result:', {
-      hasGoogleAppsScriptUrl: !!result.googleAppsScriptUrl,
-      hasGoogleSheetUrl: !!result.googleSheetUrl,
-      selectedUrl: url === DEFAULT_SHEET_URL ? 'DEFAULT' : url
-    });
-
-    return url;
-  } catch (error) {
-    console.warn('Failed to get Google Sheet URL from storage, using default:', error);
-    return DEFAULT_SHEET_URL;
-  }
-}
-
 // ═══════════════════════════════════════════════════════════
-// 🔒 SECURITY GATEKEEPER (Enhanced with retry & better logging)
+// 🚀 BACKGROUND SERVICE WORKER - OPTIMIZED
+// Centralized extension logic with modular architecture
 // ═══════════════════════════════════════════════════════════
 
-let isExtensionUnlocked = false;
-let lastAuthCheck = 0;
-const AUTH_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+// Import config (self-registered in service worker context)
+importScripts('common/config.js', 'common/performance.js', 'common/message-handler.js');
 
-// Logging utility
-function authLog(level, message, data = null) {
-  const prefix = { debug: '🔍', info: 'ℹ️', success: '✅', warn: '⚠️', error: '❌' }[level] || '📝';
-  const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-  if (data) {
-    console.log(`[${timestamp}] ${prefix} [Auth] ${message}`, data);
-  } else {
-    console.log(`[${timestamp}] ${prefix} [Auth] ${message}`);
-  }
-}
+// ═══════════════════════════════════════════════════════════
+// 🔧 CONFIGURATION (from centralized config)
+// ═══════════════════════════════════════════════════════════
 
-// Fetch with retry for auth requests
-async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 1000) {
-  let lastError;
+const { URLS, API_KEYS, TIMING, STORAGE_KEYS, ACTIONS, FEATURES } = ExtensionConfig;
+
+const HOMEPAGE_URL = URLS.WEB_APP_BASE;
+const DEFAULT_SHEET_URL = URLS.DEFAULT_GOOGLE_SHEET;
+
+// ═══════════════════════════════════════════════════════════
+// 📦 STATE MANAGEMENT
+// ═══════════════════════════════════════════════════════════
+
+const AuthState = {
+  isUnlocked: false,
+  lastCheck: 0,
+  checkInterval: TIMING.AUTH_CHECK_INTERVAL,
+  gracePeriod: TIMING.AUTH_GRACE_PERIOD
+};
+
+// ═══════════════════════════════════════════════════════════
+// 📝 LOGGING UTILITIES
+// ═══════════════════════════════════════════════════════════
+
+function createLogger(prefix) {
+  const icons = { debug: '🔍', info: 'ℹ️', success: '✅', warn: '⚠️', error: '❌' };
   
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      
-      const response = await fetch(url, { ...options, signal: controller.signal });
-      clearTimeout(timeoutId);
-      
-      if (response.ok || (response.status >= 400 && response.status < 500)) {
-        return response;
-      }
-      
-      lastError = new Error(`HTTP ${response.status}`);
-    } catch (err) {
-      lastError = err;
-      if (err.name === 'AbortError') {
-        authLog('warn', `Request timeout (attempt ${attempt + 1})`);
-      }
-    }
+  return (level, message, data = null) => {
+    if (!FEATURES.DEBUG_MODE && level === 'debug') return;
     
-    if (attempt < maxRetries) {
-      const delay = baseDelay * Math.pow(2, attempt);
-      await new Promise(resolve => setTimeout(resolve, delay));
+    const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+    const icon = icons[level] || '📝';
+    const log = `[${timestamp}] ${icon} [${prefix}] ${message}`;
+    
+    data ? console.log(log, data) : console.log(log);
+  };
+}
+
+const authLog = createLogger('Auth');
+const syncLog = createLogger('Sync');
+
+// ═══════════════════════════════════════════════════════════
+// 🌐 NETWORK UTILITIES (using PerformanceUtils)
+// ═══════════════════════════════════════════════════════════
+
+async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 1000) {
+  return PerformanceUtils.fetchWithRetry(url, options, {
+    maxRetries,
+    baseDelay,
+    timeout: TIMING.REQUEST_TIMEOUT
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// 📊 STORAGE HELPERS (with caching)
+// ═══════════════════════════════════════════════════════════
+
+async function getGoogleSheetUrl() {
+  return PerformanceUtils.withCache('googleSheetUrl', async () => {
+    try {
+      const result = await chrome.storage.local.get([
+        STORAGE_KEYS.GOOGLE_APPS_SCRIPT_URL, 
+        STORAGE_KEYS.GOOGLE_SHEET_URL
+      ]);
+      
+      const url = result[STORAGE_KEYS.GOOGLE_APPS_SCRIPT_URL] || 
+                  result[STORAGE_KEYS.GOOGLE_SHEET_URL] || 
+                  DEFAULT_SHEET_URL;
+      
+      syncLog('debug', 'Google Sheet URL retrieved', { 
+        hasCustomUrl: url !== DEFAULT_SHEET_URL 
+      });
+      
+      return url;
+    } catch (error) {
+      syncLog('warn', 'Using default Google Sheet URL', { error: error.message });
+      return DEFAULT_SHEET_URL;
     }
-  }
-  
-  throw lastError;
+  }, 5 * 60 * 1000); // Cache for 5 minutes
 }
 
 // Verify Auth with Backend (Enhanced)
