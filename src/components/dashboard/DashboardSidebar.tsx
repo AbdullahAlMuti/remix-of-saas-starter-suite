@@ -38,43 +38,45 @@ interface NavItem {
   label: string;
   href: string;
   hasSubmenu?: boolean;
+  iconBg?: string;
+  iconColor?: string;
 }
 
-// Original user navigation items with new design
+// Original user navigation items with colorful icons
 const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
-  { icon: Package, label: 'Listings', href: '/dashboard/listings' },
-  { icon: ShoppingCart, label: 'Auto Orders', href: '/dashboard/orders' },
-  { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
-  { icon: FileText, label: 'Prompts', href: '/dashboard/prompts' },
-  { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator' },
-  { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator' },
-  { icon: FileText, label: 'Blog Posts', href: '/dashboard/blog-posts' },
-  { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits' },
-  { icon: Crown, label: 'Subscription', href: '/dashboard/subscription' },
-  { icon: Puzzle, label: 'Extension', href: '/dashboard/extension' },
+  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard', iconBg: 'bg-blue-500', iconColor: 'text-white' },
+  { icon: Package, label: 'Listings', href: '/dashboard/listings', iconBg: 'bg-emerald-500', iconColor: 'text-white' },
+  { icon: ShoppingCart, label: 'Auto Orders', href: '/dashboard/orders', iconBg: 'bg-purple-500', iconColor: 'text-white' },
+  { icon: Bell, label: 'Alerts', href: '/dashboard/alerts', iconBg: 'bg-amber-500', iconColor: 'text-white' },
+  { icon: FileText, label: 'Prompts', href: '/dashboard/prompts', iconBg: 'bg-slate-600', iconColor: 'text-white' },
+  { icon: Calculator, label: 'Calculator', href: '/dashboard/calculator', iconBg: 'bg-cyan-500', iconColor: 'text-white' },
+  { icon: PenTool, label: 'Blog Generator', href: '/dashboard/blog-generator', iconBg: 'bg-pink-500', iconColor: 'text-white' },
+  { icon: FileText, label: 'Blog Posts', href: '/dashboard/blog-posts', iconBg: 'bg-indigo-500', iconColor: 'text-white' },
+  { icon: Sparkles, label: 'AI Credits', href: '/dashboard/credits', iconBg: 'bg-violet-500', iconColor: 'text-white' },
+  { icon: Crown, label: 'Subscription', href: '/dashboard/subscription', iconBg: 'bg-yellow-500', iconColor: 'text-white' },
+  { icon: Puzzle, label: 'Extension', href: '/dashboard/extension', iconBg: 'bg-teal-500', iconColor: 'text-white' },
 ];
 
-// Advanced tools section
+// Advanced tools section with hot styling
 const advancedToolsItems: NavItem[] = [
-  { icon: Sparkles, label: 'AI Product Research', href: '/dashboard/product-research' },
-  { icon: TrendingUp, label: '500 Best Selling Items', href: '/dashboard/best-selling' },
-  { icon: Flame, label: 'Must Sell Items', href: '/dashboard/must-sell' },
+  { icon: Sparkles, label: 'AI Product Research', href: '/dashboard/product-research', iconBg: 'bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500', iconColor: 'text-white' },
+  { icon: TrendingUp, label: '500 Best Selling Items', href: '/dashboard/best-selling', iconBg: 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500', iconColor: 'text-white' },
+  { icon: Flame, label: 'Must Sell Items', href: '/dashboard/must-sell', iconBg: 'bg-gradient-to-br from-red-500 via-orange-500 to-amber-500', iconColor: 'text-white' },
 ];
 
-// Admin navigation items
+// Admin navigation items with colorful icons
 const adminNavItems: NavItem[] = [
-  { icon: BarChart3, label: 'Dashboard', href: '/admin' },
-  { icon: Users, label: 'Users', href: '/admin/users' },
-  { icon: CreditCard, label: 'Plans', href: '/admin/plans' },
-  { icon: DollarSign, label: 'Payments', href: '/admin/payments' },
-  { icon: ShieldCheck, label: 'Roles', href: '/admin/roles' },
-  { icon: Megaphone, label: 'Notices', href: '/admin/notices' },
-  { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts' },
-  { icon: TrendingUp, label: 'Best Selling Items', href: '/admin/best-selling' },
-  { icon: Flame, label: 'Must Sell Items', href: '/admin/must-sell' },
-  { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit' },
-  { icon: Shield, label: 'Settings', href: '/admin/settings' },
+  { icon: BarChart3, label: 'Dashboard', href: '/admin', iconBg: 'bg-blue-500', iconColor: 'text-white' },
+  { icon: Users, label: 'Users', href: '/admin/users', iconBg: 'bg-emerald-500', iconColor: 'text-white' },
+  { icon: CreditCard, label: 'Plans', href: '/admin/plans', iconBg: 'bg-purple-500', iconColor: 'text-white' },
+  { icon: DollarSign, label: 'Payments', href: '/admin/payments', iconBg: 'bg-green-500', iconColor: 'text-white' },
+  { icon: ShieldCheck, label: 'Roles', href: '/admin/roles', iconBg: 'bg-amber-500', iconColor: 'text-white' },
+  { icon: Megaphone, label: 'Notices', href: '/admin/notices', iconBg: 'bg-pink-500', iconColor: 'text-white' },
+  { icon: Sparkles, label: 'AI Prompts', href: '/admin/prompts', iconBg: 'bg-violet-500', iconColor: 'text-white' },
+  { icon: TrendingUp, label: 'Best Selling Items', href: '/admin/best-selling', iconBg: 'bg-orange-500', iconColor: 'text-white' },
+  { icon: Flame, label: 'Must Sell Items', href: '/admin/must-sell', iconBg: 'bg-red-500', iconColor: 'text-white' },
+  { icon: ClipboardList, label: 'Audit Logs', href: '/admin/audit', iconBg: 'bg-slate-600', iconColor: 'text-white' },
+  { icon: Shield, label: 'Settings', href: '/admin/settings', iconBg: 'bg-gray-600', iconColor: 'text-white' },
 ];
 
 interface DashboardSidebarProps {
@@ -129,12 +131,12 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
         )}
         
         <div className={cn(
-          'w-8 h-8 rounded-lg flex items-center justify-center transition-colors relative z-10',
+          'w-8 h-8 rounded-lg flex items-center justify-center transition-all relative z-10 shadow-sm',
           active 
-            ? 'bg-primary text-primary-foreground' 
+            ? 'bg-primary text-primary-foreground shadow-primary/30' 
             : isHot 
-            ? 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500 text-white animate-flame-flicker' 
-            : 'bg-sidebar-accent/50 text-sidebar-foreground group-hover:bg-sidebar-accent'
+            ? cn(item.iconBg || 'bg-gradient-to-br from-orange-500 via-red-500 to-yellow-500', 'text-white animate-flame-flicker shadow-orange-500/40')
+            : cn(item.iconBg || 'bg-sidebar-accent/50', item.iconColor || 'text-sidebar-foreground', 'group-hover:shadow-md')
         )}>
           <Icon className="h-4 w-4" />
         </div>
@@ -224,7 +226,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
             <div className="py-2">
               <div className="border-t border-border/50" />
             </div>
-            <NavItemComponent item={{ icon: Settings, label: 'Settings', href: '/dashboard/settings' }} />
+            <NavItemComponent item={{ icon: Settings, label: 'Settings', href: '/dashboard/settings', iconBg: 'bg-gray-500', iconColor: 'text-white' }} />
             
             {/* Admin Panel Link */}
             {isAdmin && (
@@ -233,7 +235,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
                   <div className="border-t border-border/50" />
                 </div>
                 <NavItemComponent 
-                  item={{ icon: Shield, label: 'Admin Panel', href: '/admin' }} 
+                  item={{ icon: Shield, label: 'Admin Panel', href: '/admin', iconBg: 'bg-rose-600', iconColor: 'text-white' }} 
                 />
               </>
             )}
@@ -251,7 +253,7 @@ export function DashboardSidebar({ onCollapseChange }: DashboardSidebarProps) {
             'text-sidebar-foreground hover:bg-sidebar-accent/50'
           )}
         >
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-sidebar-accent/50">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500 text-white shadow-sm">
             <LogOut className="h-4 w-4" />
           </div>
           {!isCollapsed && <span className="text-sm font-medium">Log out</span>}
