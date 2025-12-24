@@ -1,75 +1,317 @@
-<div class="snipe-container" id="snipe-main-container">
-    
-    <div class="snipe-image-gallery" id="snipe-image-gallery">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SellerSuit Panel</title>
+  <link rel="stylesheet" href="panel.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="snipe-root-wrapper">
+    <div class="snipe-container" id="snipe-main-container">
+      
+      <!-- Header Section -->
+      <div class="panel-header">
+        <div class="header-brand">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="brand-name">SellerSuit</span>
+          <span class="brand-badge">Pro</span>
         </div>
-        <div class="image-controls" style="margin-bottom: 10px;">
-            <button class="snipe-btn" id="refresh-images-btn">Refresh Images</button>
-            <button class="snipe-btn snipe-btn-download" id="download-images-btn">Download All Images</button>
+        <div class="header-actions">
+          <button class="icon-btn" id="settings-btn" title="Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="minimize-btn" title="Minimize Panel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 14 10 14 10 20"/>
+              <polyline points="20 10 14 10 14 4"/>
+              <line x1="14" y1="10" x2="21" y2="3"/>
+              <line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Image Gallery Section -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon section-icon-images">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <span>Product Images</span>
+            <span class="badge badge-count" id="image-count">0</span>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-ghost" id="refresh-images-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+              </svg>
+              <span>Refresh</span>
+            </button>
+            <button class="btn btn-primary" id="download-images-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Download All</span>
+            </button>
+          </div>
+        </div>
+        <div class="snipe-image-gallery" id="snipe-image-gallery">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>No images loaded</p>
+            <span>Click refresh to load product images</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title Section -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon section-icon-titles">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </div>
+            <span>Title Variations</span>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-secondary" id="snipe-title-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="22" y1="12" x2="18" y2="12"/>
+                <line x1="6" y1="12" x2="2" y2="12"/>
+                <line x1="12" y1="6" x2="12" y2="2"/>
+                <line x1="12" y1="22" x2="12" y2="18"/>
+              </svg>
+              <span>Snipe Title</span>
+            </button>
+            <button class="btn btn-accent" id="opti-list-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Opti-List</span>
+            </button>
+          </div>
+        </div>
+        <div class="snipe-title-list" id="snipe-title-list">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+              <line x1="17" y1="10" x2="3" y2="10"/>
+              <line x1="21" y1="6" x2="3" y2="6"/>
+              <line x1="21" y1="14" x2="3" y2="14"/>
+              <line x1="17" y1="18" x2="3" y2="18"/>
+            </svg>
+            <p>No titles generated</p>
+            <span>Click "Snipe Title" to generate variations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="section-card toolbar-card">
+        <div class="toolbar-group">
+          <span class="toolbar-label">Actions</span>
+          <div class="toolbar-buttons">
+            <button class="btn btn-tool" id="copy-btn" title="Copy to Clipboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copy</span>
+            </button>
+            <button class="btn btn-tool" id="new-description-btn" title="Generate Description">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              <span>Description</span>
+            </button>
+            <button class="btn btn-tool" id="product-details-btn" title="View Product Details">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span>Details</span>
+            </button>
+          </div>
         </div>
 
-    <div class="snipe-title-list" id="snipe-title-list">
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <span class="toolbar-label">Calculator</span>
+          <div class="toolbar-buttons">
+            <button class="btn btn-tool btn-calculator" id="calculator-btn" title="Open Calculator">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="2" width="16" height="20" rx="2"/>
+                <line x1="8" y1="6" x2="16" y2="6"/>
+                <line x1="8" y1="10" x2="8" y2="10.01"/>
+                <line x1="12" y1="10" x2="12" y2="10.01"/>
+                <line x1="16" y1="10" x2="16" y2="10.01"/>
+                <line x1="8" y1="14" x2="8" y2="14.01"/>
+                <line x1="12" y1="14" x2="12" y2="14.01"/>
+                <line x1="16" y1="14" x2="16" y2="14.01"/>
+                <line x1="8" y1="18" x2="8" y2="18.01"/>
+                <line x1="12" y1="18" x2="12" y2="18.01"/>
+                <line x1="16" y1="18" x2="16" y2="18.01"/>
+              </svg>
+              <span>Calculator</span>
+            </button>
+            <button class="btn btn-success" id="quick-calc-btn" title="Quick Calculate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </button>
+          </div>
         </div>
-    
-    <div class="snipe-controls">
-        <button class="snipe-btn snipe-btn-action" id="snipe-title-btn">Snipe Title</button>
-        <button class="snipe-btn snipe-btn-action" id="opti-list-btn">Opti-List</button>
-        <button class="snipe-btn snipe-btn-copy" id="copy-btn">📋 Copy</button>
-        <button class="snipe-btn snipe-btn-description" id="new-description-btn">Description</button>
-        <button class="snipe-btn snipe-btn-details" id="product-details-btn">📋 Product Details</button>
-        <button class="snipe-btn snipe-btn-calculator" id="calculator-btn">💰 Calculator</button>
-        <button class="snipe-btn snipe-btn-quick-calc" id="quick-calc-btn" title="Quick Calculate">💲</button>
-        <input type="text" id="sell-it-for-input" value="" placeholder="💰 Sell it for" aria-label="Sell it for price">
-        <select id="sku-prefix" aria-label="SKU prefix">
-            <option value="AB">AB</option>
-            <option value="RC">RC</option>
-        </select>
-        <input type="text" id="sku-input" placeholder="🏷️ SKU" readonly aria-label="Generated SKU">
-        <button id="generate-sku-btn" class="snipe-btn snipe-btn-generate" title="Generate SKU">Generate</button>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group toolbar-group-inputs">
+          <div class="input-group">
+            <label for="sell-it-for-input">Sell Price</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="text" id="sell-it-for-input" placeholder="0.00" aria-label="Sell it for price">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="sku-prefix">Prefix</label>
+            <select id="sku-prefix" aria-label="SKU prefix">
+              <option value="AB">AB</option>
+              <option value="RC">RC</option>
+            </select>
+          </div>
+          <div class="input-group input-group-sku">
+            <label for="sku-input">SKU</label>
+            <div class="sku-row">
+              <input type="text" id="sku-input" placeholder="Auto-generated" readonly aria-label="Generated SKU">
+              <button class="btn btn-generate" id="generate-sku-btn" title="Generate SKU">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-</div>
+  </div>
 
-<!-- Calculator Popup -->
-<div id="calculator-popup" class="calculator-popup" style="display: none;">
+  <!-- Calculator Popup -->
+  <div id="calculator-popup" class="calculator-popup" style="display: none;">
     <div class="calculator-overlay"></div>
     <div class="calculator-modal">
-        <div class="calculator-header">
-            <h3>💰 eBay Price Calculator</h3>
-            <button class="calculator-close" id="calculator-close-btn">×</button>
+      <div class="calculator-header">
+        <div class="calculator-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2"/>
+            <line x1="8" y1="6" x2="16" y2="6"/>
+            <line x1="8" y1="10" x2="8" y2="10.01"/>
+            <line x1="12" y1="10" x2="12" y2="10.01"/>
+            <line x1="16" y1="10" x2="16" y2="10.01"/>
+          </svg>
+          <span>eBay Price Calculator</span>
         </div>
-        <div class="calculator-content">
-            <div class="calculator-form">
-                <div class="calculator-row">
-                    <label for="amazon-price">Amazon Price:</label>
-                    <input type="number" id="amazon-price" step="0.01" placeholder="0.00">
-                </div>
-                <div class="calculator-row">
-                    <label for="tax-percent">Tax %:</label>
-                    <input type="number" id="tax-percent" value="9" step="0.1" placeholder="9">
-                </div>
-                <div class="calculator-row">
-                    <label for="tracking-fee">Tracking Fee:</label>
-                    <input type="number" id="tracking-fee" value="0.20" step="0.01" placeholder="0.20">
-                </div>
-                <div class="calculator-row">
-                    <label for="ebay-fee-percent">eBay Fee %:</label>
-                    <input type="number" id="ebay-fee-percent" value="20" step="0.1" placeholder="20">
-                </div>
-                <div class="calculator-row">
-                    <label for="promo-fee-percent">Promotional Fee %:</label>
-                    <input type="number" id="promo-fee-percent" value="10" step="0.1" placeholder="10">
-                </div>
-                <div class="calculator-row">
-                    <label for="desired-profit">Desired Profit %:</label>
-                    <input type="number" id="desired-profit" step="0.1" placeholder="0">
-                </div>
-                <div class="calculator-actions">
-                    <button class="snipe-btn snipe-btn-action" id="calculate-btn" style="opacity: 0.7;">Calculate (Auto-updates)</button>
-                </div>
+        <button class="calculator-close" id="calculator-close-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="calculator-content">
+        <div class="calculator-form">
+          <div class="calc-row">
+            <label for="amazon-price">Amazon Price</label>
+            <div class="calc-input-wrapper">
+              <span class="calc-prefix">$</span>
+              <input type="number" id="amazon-price" step="0.01" placeholder="0.00">
             </div>
-            <div class="calculator-result" id="calculator-result" style="display: none;">
-                <div class="result-header">Final eBay Price:</div>
-                <div class="result-price" id="final-price">$0.00</div>
+          </div>
+          <div class="calc-row-group">
+            <div class="calc-row calc-row-half">
+              <label for="tax-percent">Tax</label>
+              <div class="calc-input-wrapper">
+                <input type="number" id="tax-percent" value="9" step="0.1" placeholder="9">
+                <span class="calc-suffix">%</span>
+              </div>
             </div>
+            <div class="calc-row calc-row-half">
+              <label for="tracking-fee">Tracking Fee</label>
+              <div class="calc-input-wrapper">
+                <span class="calc-prefix">$</span>
+                <input type="number" id="tracking-fee" value="0.20" step="0.01" placeholder="0.20">
+              </div>
+            </div>
+          </div>
+          <div class="calc-row-group">
+            <div class="calc-row calc-row-half">
+              <label for="ebay-fee-percent">eBay Fee</label>
+              <div class="calc-input-wrapper">
+                <input type="number" id="ebay-fee-percent" value="20" step="0.1" placeholder="20">
+                <span class="calc-suffix">%</span>
+              </div>
+            </div>
+            <div class="calc-row calc-row-half">
+              <label for="promo-fee-percent">Promo Fee</label>
+              <div class="calc-input-wrapper">
+                <input type="number" id="promo-fee-percent" value="10" step="0.1" placeholder="10">
+                <span class="calc-suffix">%</span>
+              </div>
+            </div>
+          </div>
+          <div class="calc-row">
+            <label for="desired-profit">Desired Profit</label>
+            <div class="calc-input-wrapper">
+              <input type="number" id="desired-profit" step="0.1" placeholder="0">
+              <span class="calc-suffix">%</span>
+            </div>
+          </div>
         </div>
+        <div class="calculator-result" id="calculator-result">
+          <div class="result-label">Recommended eBay Price</div>
+          <div class="result-price" id="final-price">$0.00</div>
+          <div class="result-note">Auto-updates as you type</div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+
+  <script src="../common/config.js"></script>
+  <script src="../common/performance.js"></script>
+  <script src="../common/ui.js"></script>
+</body>
+</html>
